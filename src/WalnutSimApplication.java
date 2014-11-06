@@ -6,7 +6,7 @@ public class WalnutSimApplication extends MultimediaApplication {
 
 	public static void main(String[] args) throws Exception
 	{
-		SwingUtilities.invokeAndWait(new WalnutSimApplication(args, 700, 700));
+		SwingUtilities.invokeAndWait(new WalnutSimApplication(args, 500, 700));
 
 	}
 	
