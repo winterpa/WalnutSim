@@ -26,7 +26,7 @@ public class WalnutManager extends DescribedSprite
 	public WalnutManager(ContentFactory contentFactory)
 	{
 		this.contentFactory = contentFactory;
-		walnutImage = contentFactory.createContent("walnut.jpg", 3);
+		walnutImage = contentFactory.createContent("walnut.png", 4);
 		walnuts = new ArrayList<Walnut>();
 	}
 	

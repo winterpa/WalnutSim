@@ -14,5 +14,4 @@ public class WalnutSimApplication extends MultimediaApplication {
 	{
 		super(args, new WalnutSimApp(), width, height);
 	}
-
 }

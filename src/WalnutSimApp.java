@@ -1,13 +1,11 @@
 import io.ResourceFinder;
 
-import java.util.*;
 import java.awt.event.*;
 
 import javax.swing.*;
 
 import manager.WalnutManager;
 
-import visual.Visualization;
 import visual.VisualizationView;
 import visual.dynamic.sampled.Screen;
 import visual.statik.sampled.Content;
@@ -190,20 +188,18 @@ implements ActionListener, MetronomeListener
 			finder = ResourceFinder.createInstance(this);
 			
 			contentFactory = new ContentFactory(finder);
+			visualization.add(background);
 			
 			background = contentFactory.createContent("background.jpg", 3);
 			
 			walnutManager = new WalnutManager(contentFactory);
+			
 			walnutManager.add(20.0, 20.0, 50);
 			walnutManager.add(120.0, 120.0, 50);
 			walnutManager.add(220.0, 220.0, 50);
 			walnutManager.add(320.0, 320.0, 50);
-			
-			
-			//walnut = new Walnut(contentFactory.createContent("walnut.jpg", 3), width, height, 100);
-			
-			visualization.add(background);
-			//visualization.add(walnut);
+
+			visualization.add(walnutManager);
 			
 			start = new JButton(START);
 			start.setBounds(300, 300, 100, 50);
@@ -224,8 +220,6 @@ implements ActionListener, MetronomeListener
 			exit.setBounds(300, 525, 100, 50);
 			exit.addActionListener(this);
 			contentPane.add(exit);
-			
-			visualization.add(walnutManager);
 
 			contentPane.add(view);
 			visualization.start();
