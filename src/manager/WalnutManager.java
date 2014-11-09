@@ -52,6 +52,7 @@ public class WalnutManager extends DescribedSprite
 		while(i.hasNext())
 		{
 			Walnut tempNut = i.next();
+			tempNut.handleTick(0);
 			tempNut.render(g2);
 		}
 	}

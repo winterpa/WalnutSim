@@ -1,16 +1,19 @@
 package content;
 
+import java.awt.geom.Rectangle2D;
+
 import java.util.Random;
 
-import visual.dynamic.described.AbstractSprite;
+import visual.dynamic.described.RuleBasedSprite;
 import visual.statik.TransformableContent;
 
-public class Walnut extends AbstractSprite
+public class Walnut extends RuleBasedSprite
 {
 	private double                    x, y;      
     private TransformableContent      content;
     private boolean					  isRendered;
     private int						  time, timeLeft;
+    private int						  speed;
     
     /**
      * Explicit Value Constructor
@@ -22,7 +25,7 @@ public class Walnut extends AbstractSprite
     public Walnut(TransformableContent content,
                           double x, double y, int time)
     {
-       super();
+       super(content);
        this.content = content;
        isRendered   = true;
        this.time 	= time;
@@ -30,16 +33,11 @@ public class Walnut extends AbstractSprite
 
        this.x = x;       
        this.y = y;       
+       this.speed = 5;
        setLocation(x, y);       
 
        setVisible(true);
     }
-	
-	@Override
-	protected TransformableContent getContent() 
-	{
-		return content;
-	}
 	
 	public boolean isRendered()
 	{
@@ -47,11 +45,19 @@ public class Walnut extends AbstractSprite
 	}
 
 	@Override
-	public void handleTick(int arg0) 
+	public void handleTick(int time) 
 	{
-		timeLeft--;
+		//timeLeft--;
 		
-		if(timeLeft <=0)
-			isRendered = false;
+		//if(timeLeft <=0)
+		//	isRendered = false;
+		x += speed;
+		y += speed;
+		setLocation(x,y);
 	}
+	
+	public Rectangle2D getBounds2D()
+    {
+       return null;
+    }
 }

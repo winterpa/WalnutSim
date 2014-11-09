@@ -7,6 +7,7 @@ import javax.swing.*;
 import manager.WalnutManager;
 
 import visual.VisualizationView;
+import visual.dynamic.described.Stage;
 import visual.dynamic.sampled.Screen;
 import visual.statik.sampled.Content;
 import visual.statik.sampled.ContentFactory;
@@ -26,8 +27,8 @@ implements ActionListener, MetronomeListener
 	private Content     		background;
 	private ResourceFinder  	finder;
 	private ContentFactory  	contentFactory;
-	private Screen  			visualization;
-	private VisualizationView 	view;
+	private Stage  				stage;
+	private VisualizationView 	stageView;
 	private WalnutManager		walnutManager;
 	
 	private static final String START = "Start";
@@ -180,26 +181,26 @@ implements ActionListener, MetronomeListener
 			contentPane = (JPanel)rootPaneContainer.getContentPane();
 			contentPane.setLayout(null);
 			
-			visualization = new Screen(60);
+			stage = new Stage(30);
 			
-			view = visualization.getView();
-			view.setBounds(0, 0, width, height);
+			stageView = stage.getView();
+			stageView.setBounds(0, 0, width, height);
 			
 			finder = ResourceFinder.createInstance(this);
 			
 			contentFactory = new ContentFactory(finder);
-			visualization.add(background);
+			stage.add(background);
 			
 			background = contentFactory.createContent("background.jpg", 3);
 			
 			walnutManager = new WalnutManager(contentFactory);
+			stage.add(walnutManager);
 			
 			walnutManager.add(20.0, 20.0, 50);
 			walnutManager.add(120.0, 120.0, 50);
 			walnutManager.add(220.0, 220.0, 50);
 			walnutManager.add(320.0, 320.0, 50);
 
-			visualization.add(walnutManager);
 			
 			start = new JButton(START);
 			start.setBounds(300, 300, 100, 50);
@@ -221,9 +222,10 @@ implements ActionListener, MetronomeListener
 			exit.addActionListener(this);
 			contentPane.add(exit);
 
-			contentPane.add(view);
-			visualization.start();
-			contentPane.repaint();
+			contentPane.add(stageView);
+			
+			stage.start();
+			//contentPane.repaint();
 		}
 		
 }
