@@ -1,11 +1,10 @@
 package manager;
 
-import io.ResourceFinder;
-
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 
 import visual.dynamic.described.DescribedSprite;
 import visual.statik.TransformableContent;
@@ -15,8 +14,11 @@ import content.Walnut;
 public class WalnutManager extends DescribedSprite
 {
 	private ArrayList<Walnut> walnuts;
-	private ContentFactory contentFactory;
 	private TransformableContent walnutImage;
+	private Boolean running;
+	private int spawnX, spawnY, spawnTimer;
+	
+    private static Random rng = new Random();
 	
 	public WalnutManager()
 	{
@@ -25,9 +27,15 @@ public class WalnutManager extends DescribedSprite
 	
 	public WalnutManager(ContentFactory contentFactory)
 	{
-		this.contentFactory = contentFactory;
 		walnutImage = contentFactory.createContent("walnut.png", 4);
 		walnuts = new ArrayList<Walnut>();
+		
+		running = false;
+		
+		//to pass in
+		spawnX = 450;
+		spawnY = 100;
+		spawnTimer = 30;
 	}
 	
 	public void add(double x, double y, int time)
@@ -40,18 +48,36 @@ public class WalnutManager extends DescribedSprite
 		walnuts.remove(walnut);
 	}
 	
+	public void start()
+	{
+		running = true;
+	}
+	
+	@Override
+	public void handleTick(int arg0)
+	{		
+		if(running && spawnTimer <= 0)
+		{
+			walnuts.add(new Walnut(walnutImage, rng.nextInt(spawnX) + 10, rng.nextInt(spawnY), 50));
+			spawnTimer = 30; //to pass in
+		}
+
+		spawnTimer--;
+	}
+	
 	@Override
 	public void render(Graphics g)
 	{
 		Graphics2D g2;		
-		g2 = (Graphics2D)g;
+		g2 = (Graphics2D) g;
 		
 		Iterator<Walnut> i;
 		i = walnuts.iterator();
 		
 		while(i.hasNext())
 		{
-			Walnut tempNut = i.next();
+			Walnut tempNut;
+			tempNut = i.next();
 			tempNut.handleTick(0);
 			tempNut.render(g2);
 		}

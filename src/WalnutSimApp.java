@@ -8,7 +8,6 @@ import manager.WalnutManager;
 
 import visual.VisualizationView;
 import visual.dynamic.described.Stage;
-import visual.dynamic.sampled.Screen;
 import visual.statik.sampled.Content;
 import visual.statik.sampled.ContentFactory;
 import app.*;
@@ -50,6 +49,8 @@ implements ActionListener, MetronomeListener
 			//Start 1st level
 			contentPane.removeAll();
 			contentPane.repaint();
+			contentPane.add(stageView);
+			walnutManager.start();
 						
 			//metronome.reset();
 		}
@@ -65,13 +66,15 @@ implements ActionListener, MetronomeListener
 			back.setBounds(300, 525, 100, 50);
 			back.addActionListener(this);
 			contentPane.add(back);
-         
+
+			contentPane.add(stageView);
 		}
 		else if(actionCommand.equals(OPTIONS))
 		{
 			//set Content Pane layout to null
 			contentPane.removeAll();
 			contentPane.repaint();
+			
          
 			label = new JLabel("Music:");
 			label.setBounds(100, 375, 100, 50);
@@ -102,7 +105,7 @@ implements ActionListener, MetronomeListener
 			back.addActionListener(this);
 			contentPane.add(back);
          
-         
+			contentPane.add(stageView);
 		}
 		else if(actionCommand.equals(EXIT))
 		{
@@ -134,7 +137,8 @@ implements ActionListener, MetronomeListener
 			exit.setBounds(300, 525, 100, 50);
 			exit.addActionListener(this);
 			contentPane.add(exit);
-         
+
+			contentPane.add(stageView);
 		}
 		else if(actionCommand.equals(MUSICON))
 		{
@@ -169,63 +173,62 @@ implements ActionListener, MetronomeListener
 		return;
 	}
 	
-		public void init()
-		{
-			
-			running = false;
-			height = 700;
-            width  = 700;
-            music = false;
-            hasSound = false;
-         
-			contentPane = (JPanel)rootPaneContainer.getContentPane();
-			contentPane.setLayout(null);
-			
-			stage = new Stage(30);
-			
-			stageView = stage.getView();
-			stageView.setBounds(0, 0, width, height);
-			
-			finder = ResourceFinder.createInstance(this);
-			
-			contentFactory = new ContentFactory(finder);
-			stage.add(background);
-			
-			background = contentFactory.createContent("background.jpg", 3);
-			
-			walnutManager = new WalnutManager(contentFactory);
-			stage.add(walnutManager);
-			
-			walnutManager.add(20.0, 20.0, 50);
-			walnutManager.add(120.0, 120.0, 50);
-			walnutManager.add(220.0, 220.0, 50);
-			walnutManager.add(320.0, 320.0, 50);
-
-			
-			start = new JButton(START);
-			start.setBounds(300, 300, 100, 50);
-			start.addActionListener(this);
-			contentPane.add(start);
-			
-            select = new JButton(SELECT);
-			select.setBounds(300, 375, 100, 50);
-			select.addActionListener(this);
-			contentPane.add(select);
-         
-            options = new JButton(OPTIONS);
-			options.setBounds(300, 450, 100, 50);
-			options.addActionListener(this);
-			contentPane.add(options);
-         
-            exit = new JButton(EXIT);
-			exit.setBounds(300, 525, 100, 50);
-			exit.addActionListener(this);
-			contentPane.add(exit);
-
-			contentPane.add(stageView);
-			
-			stage.start();
-			//contentPane.repaint();
-		}
+	public void init()
+	{
 		
+		running = false;
+		height = 700;
+        width  = 700;
+        music = false;
+        hasSound = false;
+     
+		contentPane = (JPanel)rootPaneContainer.getContentPane();
+		contentPane.setLayout(null);
+		
+		stage = new Stage(30);
+		
+		stageView = stage.getView();
+		stageView.setBounds(0, 0, width, height);
+		
+		finder = ResourceFinder.createInstance(this);
+		
+		contentFactory = new ContentFactory(finder);
+		
+		background = contentFactory.createContent("background.png", 3);
+		stage.add(background);
+		
+		walnutManager = new WalnutManager(contentFactory);
+		stage.add(walnutManager);
+		/*
+		walnutManager.add(20.0, 20.0, 50);
+		walnutManager.add(120.0, 120.0, 50);
+		walnutManager.add(220.0, 220.0, 50);
+		walnutManager.add(320.0, 320.0, 50);
+		*/
+		//walnutManager.start();
+		
+		start = new JButton(START);
+		start.setBounds(300, 300, 100, 50);
+		start.addActionListener(this);
+		contentPane.add(start);
+		
+        select = new JButton(SELECT);
+		select.setBounds(300, 375, 100, 50);
+		select.addActionListener(this);
+		contentPane.add(select);
+     
+        options = new JButton(OPTIONS);
+		options.setBounds(300, 450, 100, 50);
+		options.addActionListener(this);
+		contentPane.add(options);
+     
+        exit = new JButton(EXIT);
+		exit.setBounds(300, 525, 100, 50);
+		exit.addActionListener(this);
+		contentPane.add(exit);
+
+		contentPane.add(stageView);
+		
+		stage.start();
+	}
 }

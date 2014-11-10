@@ -2,8 +2,6 @@ package content;
 
 import java.awt.geom.Rectangle2D;
 
-import java.util.Random;
-
 import visual.dynamic.described.RuleBasedSprite;
 import visual.statik.TransformableContent;
 
@@ -14,6 +12,7 @@ public class Walnut extends RuleBasedSprite
     private boolean					  isRendered;
     private int						  time, timeLeft;
     private int						  speed;
+    private Rectangle2D				  bounds;
     
     /**
      * Explicit Value Constructor
@@ -34,8 +33,9 @@ public class Walnut extends RuleBasedSprite
        this.x = x;       
        this.y = y;       
        this.speed = 5;
+       bounds = content.getBounds2D(false);
+       
        setLocation(x, y);       
-
        setVisible(true);
     }
 	
@@ -47,17 +47,17 @@ public class Walnut extends RuleBasedSprite
 	@Override
 	public void handleTick(int time) 
 	{
-		//timeLeft--;
+		timeLeft--;
 		
-		//if(timeLeft <=0)
-		//	isRendered = false;
-		x += speed;
+		if(timeLeft <=0)
+			isRendered = false;
+		
 		y += speed;
 		setLocation(x,y);
 	}
 	
 	public Rectangle2D getBounds2D()
     {
-       return null;
+       return bounds;
     }
 }
