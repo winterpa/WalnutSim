@@ -86,14 +86,25 @@ public class WalnutManager extends DescribedSprite
 			
 			tempNut = i.next();
 			tempNut.handleTick(0);
-			tempNut.render(g2);
 			
-			/*
-			if(tempNut.toDelete() ) 
-			{
-				this.remove(tempNut);
+			if((int)tempNut.getY() >= height)
+			{				
+				System.out.println("Walnut Removed: " + tempNut.toString());
+				nutsToRemove.add(tempNut);
 			}
-			*/
+			else
+				tempNut.render(g2);
 		}
+		
+		i = nutsToRemove.iterator();
+		while(i.hasNext())
+		{
+			Walnut tempNut;
+			
+			tempNut = i.next();
+			
+			remove(tempNut);
+		}
+	}
 	}
 }
