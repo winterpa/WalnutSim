@@ -16,7 +16,7 @@ public class WalnutManager extends DescribedSprite
 	private ArrayList<Walnut> walnuts;
 	private TransformableContent walnutImage;
 	private Boolean running;
-	private int spawnX, spawnY, spawnTimer;
+	private int spawnX, spawnY, spawnTimer, spawnTime;
 	
     private static Random rng = new Random();
 	
@@ -34,8 +34,9 @@ public class WalnutManager extends DescribedSprite
 		
 		//to pass in
 		spawnX = 450;
-		spawnY = 100;
-		spawnTimer = 30;
+		spawnY = 300;
+		spawnTime = 45;
+		spawnTimer = spawnTime;
 	}
 	
 	public void add(double x, double y, int time)
@@ -53,13 +54,18 @@ public class WalnutManager extends DescribedSprite
 		running = true;
 	}
 	
+	public void setSpawnTime(int spawnTime)
+	{
+		this.spawnTime = spawnTime;
+	}
+	
 	@Override
 	public void handleTick(int arg0)
 	{		
 		if(running && spawnTimer <= 0)
 		{
 			walnuts.add(new Walnut(walnutImage, rng.nextInt(spawnX) + 10, rng.nextInt(spawnY), 50));
-			spawnTimer = 30; //to pass in
+			spawnTimer = spawnTime; //to pass in
 		}
 
 		spawnTimer--;
@@ -77,9 +83,17 @@ public class WalnutManager extends DescribedSprite
 		while(i.hasNext())
 		{
 			Walnut tempNut;
+			
 			tempNut = i.next();
 			tempNut.handleTick(0);
 			tempNut.render(g2);
+			
+			/*
+			if(tempNut.toDelete() ) 
+			{
+				this.remove(tempNut);
+			}
+			*/
 		}
 	}
 }

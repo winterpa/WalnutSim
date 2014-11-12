@@ -17,9 +17,9 @@ public class WalnutSimApp extends AbstractMultimediaApp
 implements ActionListener, MetronomeListener
 {
     
-	private boolean				music, running, hasSound;
+	private boolean				running, hasSound, hasMusic;
 	int                 		height, width;	
-	JButton		        		back, exit, musicOff, musicOn, options, select, sound, start;
+	JButton		        		back, exit, music, options, select, sound, start, more;
 	private JLabel				label;
 	JPanel		        		contentPane, selectScreen, optionsScreen;
 	private Metronome			metronome;
@@ -35,9 +35,9 @@ implements ActionListener, MetronomeListener
 	private static final String OPTIONS = "Options";
 	private static final String EXIT = "Exit Game";
 	private static final String BACK = "Back";
-	private static final String MUSICON = "Music On";
-	private static final String MUSICOFF = "Music Off";
+	private static final String MUSIC = "Music";
 	private static final String SOUND = "Sound";
+	private static final String MORE = "AT LEAST I'M NOT BERNSTEIN!";
 	
 	public void actionPerformed(ActionEvent event)
 	{
@@ -49,8 +49,15 @@ implements ActionListener, MetronomeListener
 			//Start 1st level
 			contentPane.removeAll();
 			contentPane.repaint();
+			
+			more = new JButton(MORE);
+			more.setBounds(125, 625, 250, 50);
+			more.addActionListener(this);
+			contentPane.add(more);
+			
 			contentPane.add(stageView);
 			walnutManager.start();
+			
 						
 			//metronome.reset();
 		}
@@ -63,7 +70,7 @@ implements ActionListener, MetronomeListener
 			contentPane.repaint();
 
             back = new JButton(BACK);
-			back.setBounds(300, 525, 100, 50);
+			back.setBounds(375, 525, 100, 50);
 			back.addActionListener(this);
 			contentPane.add(back);
 
@@ -76,34 +83,7 @@ implements ActionListener, MetronomeListener
 			contentPane.repaint();
 			
          
-			label = new JLabel("Music:");
-			label.setBounds(100, 375, 100, 50);
-			contentPane.add(label);
-			
-            musicOn = new JButton(MUSICON);
-            musicOn.setBounds(225, 375, 100, 50);
-            musicOn.addActionListener(this);
-            contentPane.add(musicOn);
-			
-            musicOff = new JButton(MUSICOFF);
-            musicOff.setBounds(375, 375, 100, 50);
-            musicOff.addActionListener(this);
-			contentPane.add(musicOff);
-			
-			label = new JLabel("Sound:");
-			label.setBounds(100, 450, 100, 50);
-			contentPane.add(label);
-			
-            sound = new JButton(SOUND + ": Off");
-			sound.setBounds(225, 450, 100, 50);
-			sound.addActionListener(this);
-			sound.setActionCommand(SOUND);
-			contentPane.add(sound);
-			
-            back = new JButton(BACK);
-			back.setBounds(300, 525, 100, 50);
-			back.addActionListener(this);
-			contentPane.add(back);
+			createOptionsMenu();
          
 			contentPane.add(stageView);
 		}
@@ -118,39 +98,23 @@ implements ActionListener, MetronomeListener
 		    contentPane.removeAll();
 		    contentPane.repaint();
 		 
-			start = new JButton(START);
-			start.setBounds(300, 300, 100, 50);
-			start.addActionListener(this);
-			contentPane.add(start);
-			
-            select = new JButton(SELECT);
-			select.setBounds(300, 375, 100, 50);
-			select.addActionListener(this);
-			contentPane.add(select);
-      
-            options = new JButton(OPTIONS);
-			options.setBounds(300, 450, 100, 50);
-			options.addActionListener(this);
-			contentPane.add(options);
-      
-            exit = new JButton(EXIT);
-			exit.setBounds(300, 525, 100, 50);
-			exit.addActionListener(this);
-			contentPane.add(exit);
+			createMainMenu();
 
 			contentPane.add(stageView);
 		}
-		else if(actionCommand.equals(MUSICON))
+		else if(actionCommand.equals(MUSIC))
 		{
-			//highlight when music is true and turn music on
-			if(!music)
-				music = true;
-		}
-		else if(actionCommand.equals(MUSICOFF))
-		{
-			//highlight when music is false and turn music off
-			if(music)
-				music = false;
+			//highlight when sound is true and turn sound on
+			if(!hasMusic)
+			{
+				hasMusic = true;
+				music.setText(MUSIC + ": On");
+			}
+			else
+			{
+				hasMusic = false;
+				music.setText(MUSIC + ": Off");
+			}
 		}
 		else if(actionCommand.equals(SOUND))
 		{
@@ -166,6 +130,10 @@ implements ActionListener, MetronomeListener
 				sound.setText(SOUND + ": Off");
 			}
 		}
+		else if(actionCommand.equals(MORE))
+		{
+			walnutManager.setSpawnTime(3);
+		}
 	}
 		
 	public void handleTick(int millis)
@@ -179,7 +147,7 @@ implements ActionListener, MetronomeListener
 		running = false;
 		height = 700;
         width  = 700;
-        music = false;
+        hasMusic = false;
         hasSound = false;
      
 		contentPane = (JPanel)rootPaneContainer.getContentPane();
@@ -199,36 +167,53 @@ implements ActionListener, MetronomeListener
 		
 		walnutManager = new WalnutManager(contentFactory);
 		stage.add(walnutManager);
-		/*
-		walnutManager.add(20.0, 20.0, 50);
-		walnutManager.add(120.0, 120.0, 50);
-		walnutManager.add(220.0, 220.0, 50);
-		walnutManager.add(320.0, 320.0, 50);
-		*/
-		//walnutManager.start();
 		
-		start = new JButton(START);
-		start.setBounds(300, 300, 100, 50);
-		start.addActionListener(this);
-		contentPane.add(start);
-		
-        select = new JButton(SELECT);
-		select.setBounds(300, 375, 100, 50);
-		select.addActionListener(this);
-		contentPane.add(select);
-     
-        options = new JButton(OPTIONS);
-		options.setBounds(300, 450, 100, 50);
-		options.addActionListener(this);
-		contentPane.add(options);
-     
-        exit = new JButton(EXIT);
-		exit.setBounds(300, 525, 100, 50);
-		exit.addActionListener(this);
-		contentPane.add(exit);
+		createMainMenu();
 
 		contentPane.add(stageView);
 		
 		stage.start();
+	}
+	
+	public void createMainMenu()
+	{
+		start = new JButton(START);
+		start.setBounds(375, 300, 100, 50);
+		start.addActionListener(this);
+		contentPane.add(start);
+		
+        select = new JButton(SELECT);
+		select.setBounds(375, 375, 100, 50);
+		select.addActionListener(this);
+		contentPane.add(select);
+     
+        options = new JButton(OPTIONS);
+		options.setBounds(375, 450, 100, 50);
+		options.addActionListener(this);
+		contentPane.add(options);
+     
+        exit = new JButton(EXIT);
+		exit.setBounds(375, 600, 100, 50);
+		exit.addActionListener(this);
+		contentPane.add(exit);
+	}
+	
+	public void createOptionsMenu()
+	{		
+        music = new JButton(MUSIC + ": Off");
+        music.setBounds(375, 375, 100, 50);
+        music.addActionListener(this);
+		contentPane.add(music);
+		
+        sound = new JButton(SOUND + ": Off");
+		sound.setBounds(375, 450, 100, 50);
+		sound.addActionListener(this);
+		sound.setActionCommand(SOUND);
+		contentPane.add(sound);
+		
+        back = new JButton(BACK);
+		back.setBounds(375, 525, 100, 50);
+		back.addActionListener(this);
+		contentPane.add(back);
 	}
 }

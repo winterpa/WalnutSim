@@ -9,8 +9,8 @@ public class Walnut extends RuleBasedSprite
 {
 	private double                    x, y;      
     private TransformableContent      content;
-    private boolean					  isRendered;
-    private int						  time, timeLeft;
+    private boolean					  toDelete;
+    private int						  currentTime, timeGrow;
     private int						  speed;
     private Rectangle2D				  bounds;
     
@@ -26,34 +26,46 @@ public class Walnut extends RuleBasedSprite
     {
        super(content);
        this.content = content;
-       isRendered   = true;
-       this.time 	= time;
-       timeLeft 	= this.time;  
+       this.toDelete   = false;
+       this.timeGrow = time;
+       this.currentTime 	= 0;  
 
        this.x = x;       
        this.y = y;       
        this.speed = 5;
-       bounds = content.getBounds2D(false);
+       this.bounds = content.getBounds2D(false);
        
        setLocation(x, y);       
        setVisible(true);
     }
 	
-	public boolean isRendered()
+	public boolean toDelete()
 	{
-		return isRendered;
+		return toDelete;
 	}
 
 	@Override
 	public void handleTick(int time) 
 	{
-		timeLeft--;
+		currentTime++;
 		
-		if(timeLeft <=0)
-			isRendered = false;
+		//finished growing
+		if(currentTime > timeGrow)
+		{
+			//fall down
+			y += speed;
+			setLocation(x,y);
+		}
+		//currently growing
+		else 
+		{
+			double scale = (double) currentTime / (double) timeGrow;
+			//System.out.println(scale);
+			content.setScale(scale, scale);
+		}	
 		
-		y += speed;
-		setLocation(x,y);
+		if(y > 750)
+			toDelete = true;
 	}
 	
 	public Rectangle2D getBounds2D()
