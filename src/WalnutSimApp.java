@@ -146,7 +146,7 @@ implements ActionListener, MetronomeListener
 		
 		running = false;
 		height = 700;
-        width  = 700;
+        width  = 500;
         hasMusic = false;
         hasSound = false;
      
@@ -165,7 +165,7 @@ implements ActionListener, MetronomeListener
 		background = contentFactory.createContent("background.png", 3);
 		stage.add(background);
 		
-		walnutManager = new WalnutManager(contentFactory);
+		walnutManager = new WalnutManager(width, height, contentFactory);
 		stage.add(walnutManager);
 		
 		createMainMenu();

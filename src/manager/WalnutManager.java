@@ -16,16 +16,16 @@ public class WalnutManager extends DescribedSprite
 	private ArrayList<Walnut> walnuts;
 	private TransformableContent walnutImage;
 	private Boolean running;
-	private int spawnX, spawnY, spawnTimer, spawnTime;
+	private int height, maxWalnuts, spawnX, spawnY, spawnTimer, spawnTime, width;
 	
     private static Random rng = new Random();
 	
 	public WalnutManager()
 	{
-		this(null);
+		this(0, 0, null);
 	}
 	
-	public WalnutManager(ContentFactory contentFactory)
+	public WalnutManager(int width, int height, ContentFactory contentFactory)
 	{
 		walnutImage = contentFactory.createContent("walnut.png", 4);
 		walnuts = new ArrayList<Walnut>();
@@ -37,6 +37,9 @@ public class WalnutManager extends DescribedSprite
 		spawnY = 300;
 		spawnTime = 45;
 		spawnTimer = spawnTime;
+		this.height = height;
+		this.width = width;
+		maxWalnuts = 5;
 	}
 	
 	public void add(double x, double y, int time)
@@ -80,6 +83,8 @@ public class WalnutManager extends DescribedSprite
 		Iterator<Walnut> i;
 		i = walnuts.iterator();
 		
+		ArrayList<Walnut> nutsToRemove = new ArrayList<Walnut>();
+		
 		while(i.hasNext())
 		{
 			Walnut tempNut;
@@ -89,7 +94,6 @@ public class WalnutManager extends DescribedSprite
 			
 			if((int)tempNut.getY() >= height)
 			{				
-				System.out.println("Walnut Removed: " + tempNut.toString());
 				nutsToRemove.add(tempNut);
 			}
 			else
@@ -105,6 +109,5 @@ public class WalnutManager extends DescribedSprite
 			
 			remove(tempNut);
 		}
-	}
 	}
 }

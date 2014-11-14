@@ -68,6 +68,16 @@ public class Walnut extends RuleBasedSprite
 			toDelete = true;
 	}
 	
+	public double getY()
+	{
+		return y;
+	}
+	
+	public double getX()
+	{
+		return x;
+	}
+	
 	public Rectangle2D getBounds2D()
     {
        return bounds;
