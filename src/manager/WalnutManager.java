@@ -2,6 +2,8 @@ package manager;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -12,6 +14,7 @@ import visual.statik.sampled.ContentFactory;
 import content.Walnut;
 
 public class WalnutManager extends DescribedSprite
+						   implements MouseListener
 {
 	private ArrayList<Walnut> walnuts;
 	private TransformableContent walnutImage;
@@ -42,9 +45,9 @@ public class WalnutManager extends DescribedSprite
 		maxWalnuts = 5;
 	}
 	
-	public void add(double x, double y, int time)
+	public void add(double x, double y, int time, int speed)
 	{
-		walnuts.add(new Walnut(walnutImage, x, y, time));
+		walnuts.add(new Walnut(walnutImage, x, y, time, speed));
 	}
 	
 	public void remove(Walnut walnut)
@@ -67,7 +70,7 @@ public class WalnutManager extends DescribedSprite
 	{		
 		if(running && spawnTimer <= 0)
 		{
-			walnuts.add(new Walnut(walnutImage, rng.nextInt(spawnX) + 10, rng.nextInt(spawnY), 50));
+			walnuts.add(new Walnut(walnutImage, rng.nextInt(spawnX) + 10, rng.nextInt(spawnY), 60, 3));
 			spawnTimer = spawnTime; //to pass in
 		}
 
@@ -100,14 +103,50 @@ public class WalnutManager extends DescribedSprite
 				tempNut.render(g2);
 		}
 		
+		removeNuts(nutsToRemove);
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent event) 
+	{
+		ArrayList<Walnut> nutsToRemove = new ArrayList<Walnut>();
+		Iterator<Walnut> i;
+		int mX, mY;
+		
+		i = walnuts.iterator();
+		mX = event.getX();
+		mY = event.getY();
+		System.out.println("Mouse click:" + mX + ", " + mY);
+				
+		while(i.hasNext())
+		{			
+			Walnut tempNut;
+			tempNut = i.next();
+			System.out.println(tempNut.getBounds2D().toString());
+			if( tempNut.contains(mX, mY) )
+			{
+				System.out.println("Clicked a nut");
+				nutsToRemove.add(tempNut);
+			}
+		}
+		
+		removeNuts(nutsToRemove);
+	}
+	
+	public void removeNuts(ArrayList<Walnut> nutsToRemove)
+	{
+		Iterator<Walnut> i;
 		i = nutsToRemove.iterator();
 		while(i.hasNext())
-		{
+		{			
 			Walnut tempNut;
-			
-			tempNut = i.next();
-			
+			tempNut = i.next();			
 			remove(tempNut);
 		}
 	}
+
+	public void mouseEntered(MouseEvent arg0) {	}
+	public void mouseExited(MouseEvent arg0) { }
+	public void mousePressed(MouseEvent arg0) {	}
+	public void mouseReleased(MouseEvent arg0) { }
 }

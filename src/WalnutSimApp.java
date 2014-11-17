@@ -153,7 +153,7 @@ implements ActionListener, MetronomeListener
 		contentPane = (JPanel)rootPaneContainer.getContentPane();
 		contentPane.setLayout(null);
 		
-		stage = new Stage(30);
+		stage = new Stage(15);
 		
 		stageView = stage.getView();
 		stageView.setBounds(0, 0, width, height);
@@ -167,6 +167,7 @@ implements ActionListener, MetronomeListener
 		
 		walnutManager = new WalnutManager(width, height, contentFactory);
 		stage.add(walnutManager);
+	    stage.addMouseListener(walnutManager);
 		
 		createMainMenu();
 

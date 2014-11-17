@@ -22,20 +22,20 @@ public class Walnut extends RuleBasedSprite
      * @param height    The height of the Stage
      */
     public Walnut(TransformableContent content,
-                          double x, double y, int time)
+                          double x, double y, int time, int speed)
     {
        super(content);
-       this.content = content;
        this.toDelete   = false;
        this.timeGrow = time;
-       this.currentTime 	= 0;  
+       this.currentTime = 0;  
 
        this.x = x;       
        this.y = y;       
-       this.speed = 5;
+       this.speed = speed;
        this.bounds = content.getBounds2D(false);
-       
-       setLocation(x, y);       
+
+       setLocation(x, y);
+	   this.bounds.setRect(x,y,55,55);
        setVisible(true);
     }
 	
@@ -53,16 +53,10 @@ public class Walnut extends RuleBasedSprite
 		if(currentTime > timeGrow)
 		{
 			//fall down
-			y += speed;
+			y += speed;       
 			setLocation(x,y);
+			bounds.setRect(x,y,55,55);
 		}
-		//currently growing
-		else 
-		{
-			double scale = (double) currentTime / (double) timeGrow;
-			//System.out.println(scale);
-			content.setScale(scale, scale);
-		}	
 		
 		if(y > 750)
 			toDelete = true;
@@ -78,8 +72,8 @@ public class Walnut extends RuleBasedSprite
 		return x;
 	}
 	
-	public Rectangle2D getBounds2D()
-    {
-       return bounds;
-    }
+	public boolean contains(int mX, int mY)
+	{
+		return bounds.contains(mX, mY);
+	}
 }
