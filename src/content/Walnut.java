@@ -90,6 +90,21 @@ public class Walnut extends RuleBasedSprite
 		return x;
 	}
 	
+	public boolean inBounds(int mX, int mY)
+        {
+    	boolean inBounds;
+    	inBounds = false;
+    	if(mX >= x && mX <= maxX)
+    	{
+    		if(mY >= y && mY <= maxY)
+    		{
+    			inBounds = true;
+    		}
+    	}
+    	
+    	return inBounds;
+        }  
+	
 	public void print()
 	{
 		System.out.println( this.toString() );
