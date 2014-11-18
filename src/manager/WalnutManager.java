@@ -22,20 +22,26 @@ public class WalnutManager extends DescribedSprite
 	private Boolean running;
 	private int height, spawnX, spawnY;
 	private double spawnTimer;
+	
 	// current num of walnuts being rendered
-	private int currentWalnuts = 0;
+	private int currentWalnuts;
+	
 	// max num of walnuts on-screen
 	private int maxWalnuts;
+	
 	// num of walnuts spawned
-	private int walnutsSpawned = 0;
+	private int walnutsSpawned;
+	
 	// num of walnuts removed (clicked or falls below screen)
-	private int walnutsRemoved = 0;
+	private int walnutsRemoved;
+	
 	// num of walnuts collected (clicked)
 	/* to be used by score */
-	private int walnutsCollected = 0;
+	private int walnutsCollected;
+	
 	// num of walnuts missed (falls below screen)
 	/* to be used by frustration */
-	private int walnutsMissed = 0;
+	private int walnutsMissed;
 	
 	/*
 	 *  Level variables
@@ -68,11 +74,19 @@ public class WalnutManager extends DescribedSprite
 		spawnY = 300;
 		maxWalnuts = 50;
 		
+		//init values
+		currentWalnuts = 0;
+		walnutsSpawned = 0;
+		walnutsRemoved = 0;
+		walnutsCollected = 0;
+		walnutsMissed = 0;
+			
 		//default level values
 		spawnTime = 0.75 * 60;
 		growTime = 1;
 		totalWalnuts = 10;
 		walnutSpeed = 3;
+		maxWalnuts = 10;
 		
 		spawnTimer = spawnTime;
 		this.height = height;
@@ -172,36 +186,6 @@ public class WalnutManager extends DescribedSprite
 		removeNuts();
 	}
 
-	@Override
-	public void mouseClicked(MouseEvent event) 
-	{
-		ArrayList<Walnut> nutsToRemove = new ArrayList<Walnut>();
-		
-		Iterator<Walnut> i;
-		i = walnuts.iterator();
-		
-		int mX, mY;
-		mX = event.getX();
-		mY = event.getY();
-				
-		while(i.hasNext())
-		{			
-			Walnut tempNut;
-			
-			tempNut = i.next();
-			//tempNut.print(); //debugging
-			
-			if( tempNut.contains(mX, mY) )
-			{
-				nutsToRemove.add(tempNut);
-				walnutsCollected++;
-				walnutsRemoved++;
-			}
-		}
-		
-		removeNuts();
-	}
-
 	public void remove(Walnut walnut)
 	{
 		walnuts.remove(walnut);
@@ -243,9 +227,10 @@ public class WalnutManager extends DescribedSprite
 	{
 		this.spawnTime = spawnTime;
 	}
-
-	public void mouseEntered(MouseEvent arg0) {	}
-	public void mouseExited(MouseEvent arg0) { }
-	public void mousePressed(MouseEvent arg0) {	}
-	public void mouseReleased(MouseEvent arg0) { }
+	
+	public void mouseClicked(MouseEvent event) {}
+	public void mouseEntered(MouseEvent arg0) {}
+	public void mouseExited(MouseEvent arg0) {}
+	public void mousePressed(MouseEvent arg0) {}
+	public void mouseReleased(MouseEvent arg0) {}
 }
