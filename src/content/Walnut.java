@@ -25,11 +25,14 @@ public class Walnut extends RuleBasedSprite
      * @param height    The height of the Stage
      */
     public Walnut(TransformableContent content,
+
                           int x, int y, double growTime, double walnutSpeed, int id)
+
     {
        super(content);
        this.toDelete   = false;
        this.growTime = growTime * 60;
+
        this.currentTime = 0;  
 
        this.x = x;       
