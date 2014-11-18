@@ -54,7 +54,7 @@ public class ScoreMeter extends AbstractSprite
 	}
 	
 	protected void paintGlyphs(Graphics2D g2, String text)
-    {
+    	{
 		FontRenderContext       frc;
 		GlyphVector             glyphs;
 		Shape                   shape;
@@ -70,7 +70,7 @@ public class ScoreMeter extends AbstractSprite
 		g2.fill(shape);
 		g2.setColor(Color.BLACK);
 		g2.draw(shape);
-    }
+    	}
 	
 	public void render(Graphics g)
 	{
