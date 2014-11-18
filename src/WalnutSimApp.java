@@ -28,6 +28,9 @@ implements ActionListener, MetronomeListener
 	private static final String LEVEL_TWO = "Level 2";
 	private static final String LEVEL_THREE = "Level 3";
 	
+	private static final int FRUSTRATION_METER_WIDTH = 40;
+	private static final int FRUSTRATION_METER_HEIGHT = 100;
+	
 	private boolean				hasSound, hasMusic;
 	int                 		height, width;	
 	JButton		        		back, exit, music, options, select, sound, start;
