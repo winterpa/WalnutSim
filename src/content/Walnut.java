@@ -7,12 +7,15 @@ import visual.statik.TransformableContent;
 
 public class Walnut extends RuleBasedSprite
 {
-	private double                    x, y;      
-    private TransformableContent      content;
+	private int	                      x, y;      
     private boolean					  toDelete;
-    private int						  currentTime, timeGrow;
-    private int						  speed;
+    private double					  currentTime;
+    private double					  growTime;
+    private double					  walnutSpeed;
     private Rectangle2D				  bounds;
+    
+    //debugging
+    private int id;
     
     /**
      * Explicit Value Constructor
@@ -22,27 +25,34 @@ public class Walnut extends RuleBasedSprite
      * @param height    The height of the Stage
      */
     public Walnut(TransformableContent content,
-                          double x, double y, int time)
+                          int x, int y, double growTime, double walnutSpeed, int id)
     {
        super(content);
-       this.content = content;
        this.toDelete   = false;
-       this.timeGrow = time;
-       this.currentTime 	= 0;  
+       this.growTime = growTime * 60;
+       this.currentTime = 0;  
 
        this.x = x;       
        this.y = y;       
-       this.speed = 5;
+       this.walnutSpeed = walnutSpeed;
        this.bounds = content.getBounds2D(false);
-       
-       setLocation(x, y);       
+
+       setLocation(x, y);
+	   this.bounds.setRect(x,y,55,55);
        setVisible(true);
+       
+       this.id = id;
     }
-	
-	public boolean toDelete()
+    
+	public boolean contains(int mX, int mY)
 	{
-		return toDelete;
+		return bounds.contains(mX, mY);
 	}
+    
+    public int getID()
+    {
+    	return id;
+    }
 
 	@Override
 	public void handleTick(int time) 
@@ -50,22 +60,21 @@ public class Walnut extends RuleBasedSprite
 		currentTime++;
 		
 		//finished growing
-		if(currentTime > timeGrow)
+		if(currentTime > growTime)
 		{
 			//fall down
-			y += speed;
+			y += walnutSpeed;
 			setLocation(x,y);
+			bounds.setRect(x,y,55,55);
 		}
-		//currently growing
-		else 
-		{
-			double scale = (double) currentTime / (double) timeGrow;
-			//System.out.println(scale);
-			content.setScale(scale, scale);
-		}	
 		
 		if(y > 750)
 			toDelete = true;
+	}
+	
+	public Rectangle2D getBounds2D()
+	{
+		return bounds;
 	}
 	
 	public double getY()
@@ -78,8 +87,22 @@ public class Walnut extends RuleBasedSprite
 		return x;
 	}
 	
-	public Rectangle2D getBounds2D()
-    {
-       return bounds;
-    }
+	public void print()
+	{
+		System.out.println( this.toString() );
+	}
+	
+	public boolean toDelete()
+	{
+		return toDelete;
+	}
+	
+	public String toString()
+	{
+		String result;
+		
+		result = "Walnut " + id + " Bounds: " + bounds.toString();
+		
+		return result;
+	}
 }

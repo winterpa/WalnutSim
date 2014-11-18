@@ -16,20 +16,7 @@ import event.*;
 public class WalnutSimApp extends AbstractMultimediaApp
 implements ActionListener, MetronomeListener
 {
-    
-	private boolean				running, hasSound, hasMusic;
-	int                 		height, width;	
-	JButton		        		back, exit, music, options, select, sound, start, more;
-	private JLabel				label;
-	JPanel		        		contentPane, selectScreen, optionsScreen;
-	private Metronome			metronome;
-	private Content     		background;
-	private ResourceFinder  	finder;
-	private ContentFactory  	contentFactory;
-	private Stage  				stage;
-	private VisualizationView 	stageView;
-	private WalnutManager		walnutManager;
-	
+	// button names
 	private static final String START = "Start";
 	private static final String SELECT = "Select Stage";
 	private static final String OPTIONS = "Options";
@@ -37,7 +24,21 @@ implements ActionListener, MetronomeListener
 	private static final String BACK = "Back";
 	private static final String MUSIC = "Music";
 	private static final String SOUND = "Sound";
-	private static final String MORE = "AT LEAST I'M NOT BERNSTEIN!";
+	private static final String LEVEL_ONE = "Level 1";
+	private static final String LEVEL_TWO = "Level 2";
+	private static final String LEVEL_THREE = "Level 3";
+	
+	private boolean				hasSound, hasMusic;
+	int                 		height, width;	
+	JButton		        		back, exit, music, options, select, sound, start;
+	JButton						level_one, level_two, level_three;
+	JPanel		        		contentPane, selectScreen, optionsScreen;
+	private Content     		background;
+	private ResourceFinder  	finder;
+	private ContentFactory  	contentFactory;
+	private Stage  				stage;
+	private VisualizationView 	stageView;
+	private WalnutManager		walnutManager;
 	
 	public void actionPerformed(ActionEvent event)
 	{
@@ -50,16 +51,8 @@ implements ActionListener, MetronomeListener
 			contentPane.removeAll();
 			contentPane.repaint();
 			
-			more = new JButton(MORE);
-			more.setBounds(125, 625, 250, 50);
-			more.addActionListener(this);
-			contentPane.add(more);
-			
 			contentPane.add(stageView);
 			walnutManager.start();
-			
-						
-			//metronome.reset();
 		}
 		else if(actionCommand.equals(SELECT))
 		{
@@ -68,11 +61,9 @@ implements ActionListener, MetronomeListener
          
 			contentPane.removeAll();
 			contentPane.repaint();
-
-            back = new JButton(BACK);
-			back.setBounds(375, 525, 100, 50);
-			back.addActionListener(this);
-			contentPane.add(back);
+			
+			createLevelMenu();
+            createBackButton();
 
 			contentPane.add(stageView);
 		}
@@ -82,7 +73,6 @@ implements ActionListener, MetronomeListener
 			contentPane.removeAll();
 			contentPane.repaint();
 			
-         
 			createOptionsMenu();
          
 			contentPane.add(stageView);
@@ -130,12 +120,56 @@ implements ActionListener, MetronomeListener
 				sound.setText(SOUND + ": Off");
 			}
 		}
-		else if(actionCommand.equals(MORE))
+		else if(actionCommand.equals(LEVEL_ONE))
 		{
-			walnutManager.setSpawnTime(3);
+			contentPane.removeAll();
+			contentPane.repaint();
+			
+			contentPane.add(stageView);
+			
+			walnutManager.changeLevel(0.75, 1, 10, 1.5);
+			walnutManager.start();
+		}
+		else if(actionCommand.equals(LEVEL_TWO))
+		{
+			contentPane.removeAll();
+			contentPane.repaint();
+			
+			contentPane.add(stageView);
+			
+			walnutManager.changeLevel(0.35, 1.5, 50, 1);
+			walnutManager.start();
+		}
+		else if(actionCommand.equals(LEVEL_THREE))
+		{
+			contentPane.removeAll();
+			contentPane.repaint();
+			
+			contentPane.add(stageView);
+			
+			walnutManager.changeLevel(0.25, 2, 90000, 5);
+			walnutManager.start();
 		}
 	}
-		
+	
+	/*
+	 * Check if WalnutManager has finished the level
+	 *  - Add 'bool levelFinished' variable to WalnutManager?
+	 *  
+	 *  If the level is finished, display the stats in a 'level complete' screen
+	 *   - Add 'getLevelStats' function that returns walnutsCollected, walnutsMissed
+	 *  
+	 *  Add buttons to replay level, go to next level, or go back to main menu
+	 *   - Replay level: clear buttons, and start() the walnutManager
+	 *   - Next level: changeLevel(), clear buttons, and start() the walnutManager
+	 *   - Main Menu: clear buttons, create Main Menu buttons
+	 */		
+	
+	/*
+	 * How to handle pause menu
+	 *  - don't call walnut's handleTick function in walnutManager's handleTick
+	 */
+	
 	public void handleTick(int millis)
 	{
 		return;
@@ -143,8 +177,6 @@ implements ActionListener, MetronomeListener
 	
 	public void init()
 	{
-		
-		running = false;
 		height = 700;
         width  = 500;
         hasMusic = false;
@@ -153,7 +185,7 @@ implements ActionListener, MetronomeListener
 		contentPane = (JPanel)rootPaneContainer.getContentPane();
 		contentPane.setLayout(null);
 		
-		stage = new Stage(30);
+		stage = new Stage(15);
 		
 		stageView = stage.getView();
 		stageView.setBounds(0, 0, width, height);
@@ -167,6 +199,7 @@ implements ActionListener, MetronomeListener
 		
 		walnutManager = new WalnutManager(width, height, contentFactory);
 		stage.add(walnutManager);
+	    stage.addMouseListener(walnutManager);
 		
 		createMainMenu();
 
@@ -211,7 +244,30 @@ implements ActionListener, MetronomeListener
 		sound.setActionCommand(SOUND);
 		contentPane.add(sound);
 		
-        back = new JButton(BACK);
+		createBackButton();
+	}
+	
+	public void createLevelMenu()
+	{
+		level_one = new JButton(LEVEL_ONE);
+        level_one.setBounds(375, 300, 100, 50);
+        level_one.addActionListener(this);
+		contentPane.add(level_one);
+		
+		level_two = new JButton(LEVEL_TWO);
+		level_two.setBounds(375, 375, 100, 50);
+		level_two.addActionListener(this);
+		contentPane.add(level_two);
+		
+		level_three = new JButton(LEVEL_THREE);
+		level_three.setBounds(375, 450, 100, 50);
+		level_three.addActionListener(this);
+		contentPane.add(level_three);
+	}
+	
+	public void createBackButton()
+	{
+		back = new JButton(BACK);
 		back.setBounds(375, 525, 100, 50);
 		back.addActionListener(this);
 		contentPane.add(back);
