@@ -27,9 +27,6 @@ public class ScoreMeter extends AbstractSprite
 	{
 		this.text = "Score: 0";
 		font = new Font("Comic Sans MS", Font.PLAIN, fontSize);
-		
-		this.x = x;
-		this.y = y;
 	}
 	
 	public void paint(Graphics g)
