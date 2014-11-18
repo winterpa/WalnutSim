@@ -179,6 +179,11 @@ public class WalnutManager extends DescribedSprite
 				walnutsMissed++;
 				walnutsRemoved++;
 			}
+			else if(tempNut.toDelete == true)
+			{
+				nutsToRemove.add(tempNut);
+				walnutsRemoved++;
+			}
 			else
 				tempNut.render(g2);
 		}
