@@ -100,6 +100,11 @@ public class Walnut extends RuleBasedSprite
 		return toDelete;
 	}
 	
+	public void setDeleteTrue()
+	{
+		toDelete = true;
+	}
+	
 	public String toString()
 	{
 		String result;
