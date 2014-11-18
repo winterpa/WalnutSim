@@ -20,7 +20,7 @@ public class WalnutManager extends DescribedSprite
 	private ArrayList<Walnut> walnuts, nutsToRemove;
 	private TransformableContent walnutImage;
 	private Boolean running;
-	private int height, spawnX, spawnY;
+	private int currentX, currentY, height, spawnX, spawnY;
 	private double spawnTimer;
 	
 	// current num of walnuts being rendered
@@ -231,6 +231,32 @@ public class WalnutManager extends DescribedSprite
 	public void mouseClicked(MouseEvent event) {}
 	public void mouseEntered(MouseEvent arg0) {}
 	public void mouseExited(MouseEvent arg0) {}
-	public void mousePressed(MouseEvent arg0) {}
+	public void mousePressed(MouseEvent arg0) {
+				//System.out.println("Event-1");
+		//toDelete = true;
+		currentX = e.getX();
+		currentY = e.getY();
+		Walnut tempNut;
+		Iterator<Walnut> i;
+		ArrayList<Walnut> nutsToRemove = new ArrayList<Walnut>();
+		//System.out.println("Mouse click:" + currentX + ", " + currentY);
+		i = walnuts.iterator();
+		while(i.hasNext())
+		{
+		//	System.out.println("Inside Walnuts");
+			tempNut = i.next();
+			//if((currentX>= tempNut.getX() && currentX <= (tempNut.getX() + tempNut.getWidth())) && (currentY>= tempNut.getY() && currentY <= (tempNut.getY() + tempNut.getHeight())))
+			if(tempNut.inBounds(currentX, currentY))
+			{
+				//System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+				tempNut.setDeleteTrue();
+				//remove(tempNut);
+				nutsToRemove.add(tempNut);
+			
+			}
+		}
+	
+		removeNuts(nutsToRemove);
+	}
 	public void mouseReleased(MouseEvent arg0) {}
 }
