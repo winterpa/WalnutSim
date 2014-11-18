@@ -1,21 +1,20 @@
 package content;
 
 import java.awt.geom.Rectangle2D;
+import java.util.Random;
 
 import visual.dynamic.described.RuleBasedSprite;
 import visual.statik.TransformableContent;
 
 public class Walnut extends RuleBasedSprite
 {
-	private int	                      x, y;      
-    private boolean					  toDelete;
-    private double					  currentTime;
-    private double					  growTime;
-    private double					  walnutSpeed;
-    private Rectangle2D				  bounds;
-    
-    //debugging
-    private int id;
+    private boolean					  isRendered;
+    public boolean 					  toDelete;
+	private double                    fullHeight, fullWidth, height, heightGrowthRate, 
+		maxX, maxY, percentHeight, percentWidth, speed, timeGrow, timeLeft, width, widthGrowthRate, x, y;   
+    private int						  currentTime, time;
+    private Rectangle2D               bounds, maxWalnutBounds, minWalnutBounds;
+    private TransformableContent      content;
     
     /**
      * Explicit Value Constructor
@@ -25,75 +24,62 @@ public class Walnut extends RuleBasedSprite
      * @param height    The height of the Stage
      */
     public Walnut(TransformableContent content,
-
-                          int x, int y, double growTime, double walnutSpeed, int id)
-
-    {
-       super(content);
-       this.toDelete   = false;
-       this.growTime = growTime * 60;
-
-       this.currentTime = 0;  
-
-       this.x = x;       
-       this.y = y;       
-       this.walnutSpeed = walnutSpeed;
-       this.bounds = content.getBounds2D(false);
-       this.maxX = bounds.getWidth() + x;
-       this.maxY = bounds.getHeight()+ y;
-
-       setLocation(x, y);
-       this.bounds.setRect(x,y,55,55);
-       setVisible(true);
-       
-       this.id = id;
+                          double x, double y, double timeLeft, double speed)
+    {   	
+    	 super(content);
+    	 this.content = content;
+    	 this.toDelete = false;
+    	 this.timeGrow = timeLeft;
+    	 this.currentTime = 0;
+    	 this.x = x;
+    	 this.y = y;
+    	 this.speed = speed;
+    	 this.bounds = content.getBounds2D(false);
+    	 this.maxX = bounds.getWidth() + x;
+    	 this.maxY = bounds.getHeight()+ y;
+    	 setScale(.1, .1);
+    	 setLocation(x, y);
+    	 setVisible(true);
     }
-    
+	
+	/*@Override
+	protected TransformableContent getContent() 
+	{
+		return content;
+	}*/
+	
 	public boolean contains(int mX, int mY)
-	{
-		return bounds.contains(mX, mY);
-	}
-    
-    public int getID()
     {
-    	return id;
+		return bounds.contains(mX, mY);
     }
-
-	@Override
-	public void handleTick(int time) 
+	
+	public boolean isRendered()
 	{
-		currentTime++;
-		
-		//finished growing
-		if(currentTime > growTime)
-		{
-			//fall down
-			y += walnutSpeed;
-			setLocation(x,y);
-			bounds.setRect(x,y,55,55);
-		}
-		
-		if(y > 750)
-			toDelete = true;
+		return isRendered;
 	}
 	
-	public Rectangle2D getBounds2D()
+	public boolean toDelete()
 	{
-		return bounds;
+		return toDelete;
 	}
-	
-	public double getY()
+	public double getHeight()
 	{
-		return y;
+		return height;
 	}
-	
-	public double getX()
+	public double getWidth()
 	{
-		return x;
+		return width;
 	}
-	
-	public boolean inBounds(int mX, int mY)
-        {
+    public double getY()
+	{
+    	return y;
+	}
+    public double getX()
+	{
+	    return x;
+	}
+    public boolean inBounds(int mX, int mY)
+    {
     	boolean inBounds;
     	inBounds = false;
     	if(mX >= x && mX <= maxX)
@@ -105,29 +91,84 @@ public class Walnut extends RuleBasedSprite
     	}
     	
     	return inBounds;
-        }  
-	
-	public void print()
+    }
+	public Rectangle2D getBounds2D()
 	{
-		System.out.println( this.toString() );
+		return bounds;
 	}
-	
-	public boolean toDelete()
+   
+   public void grow()
+   {
+   //Need to know height and width of image and grow until time left
+   //Grow between intial height and width to maxHeight and maxWidth at
+   //the rate of constant maxHeight/timeLeft & maxWidth/timeLeft
+	   
+	   setScale(percentWidth, percentHeight);
+	   height += heightGrowthRate;
+	   width += widthGrowthRate;
+	   percentWidth = fullWidth/width;
+	   percentHeight = fullHeight/height;
+	   setScale(fullWidth/100, fullHeight/100);
+
+   }
+   
+   public void fall()
+   {
+   //Until the walnut hits the ground, drop straight down
+   //The walnut has hit the ground when y + height = windowHeight
+   y += 1;
+   setLocation(x, y);
+   //isRendered = false;
+   }
+	/*@Override
+	public void handleTick(int currentTime) 
 	{
-		return toDelete;
+   //Is timeLeft the time until the walnut drops?
+		timeLeft = time - currentTime;
+	//If timeLeft > 0 -> grow()
+   //else, fall()
+		if(timeLeft >=0)
+         grow();
+      else
+      {
+         fall();
+			isRendered = false;
+      }
+	}*/
+   
+	@Override
+	public void handleTick(int time)
+	{
+		currentTime++;
+		//finished growing
+		
+		//Time in milliseconds this Walnut has existed
+		//System.out.println("Time: " + currentTime + " X: " + x + " Y: " + y + " maxX: " + maxX + " maxY: " + maxY);
+		
+		if(currentTime > timeGrow)
+		{
+			//fall down
+			y += speed;
+			maxY += speed;
+			setLocation(x,y);
+		}
+		//currently growing
+		else
+		{
+			//grow();
+			double scale = (double) currentTime / (double) timeGrow;
+			//System.out.println(scale);
+			//System.out.println(scale);
+			setScale(scale, scale);
+			
+		}
+		if(y > 750)
+			toDelete = true;
 	}
-	
+
 	public void setDeleteTrue()
 	{
 		toDelete = true;
 	}
-	
-	public String toString()
-	{
-		String result;
-		
-		result = "Walnut " + id + " Bounds: " + bounds.toString();
-		
-		return result;
-	}
+
 }
