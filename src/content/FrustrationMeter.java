@@ -97,13 +97,13 @@ public class FrustrationMeter extends RuleBasedSprite
        // Cast the Graphics object as a Graphics2D object
        g2 = (Graphics2D)g;       
 
-       pixelsPerFrustration = (double)height / maxFrustration;
+       pixelsPerFrustration = (double)width / maxFrustration;
 
        frustrationInPixels = pixelsPerFrustration * currentFrustration;       
 
        // Construct a Rectangle2D for the price
-       bar = new Rectangle2D.Double(left,  top+height-frustrationInPixels,
-                                    width, frustrationInPixels);
+       bar = new Rectangle2D.Double(left,  top,
+                                    frustrationInPixels, height);
        
        double colorPerFrustration = 255/maxFrustration;
        
