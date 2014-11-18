@@ -39,9 +39,11 @@ public class Walnut extends RuleBasedSprite
        this.y = y;       
        this.walnutSpeed = walnutSpeed;
        this.bounds = content.getBounds2D(false);
+       this.maxX = bounds.getWidth() + x;
+       this.maxY = bounds.getHeight()+ y;
 
        setLocation(x, y);
-	   this.bounds.setRect(x,y,55,55);
+       this.bounds.setRect(x,y,55,55);
        setVisible(true);
        
        this.id = id;
