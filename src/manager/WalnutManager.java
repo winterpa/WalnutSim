@@ -1,4 +1,5 @@
 package manager;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
@@ -17,7 +18,7 @@ implements MouseListener
 {
 	private ArrayList<Walnut> walnuts;
 	private TransformableContent walnutImage;
-	private Boolean running;
+	private boolean running;
 	private int currentX, currentY, height, spawnX, spawnY, width;
 	private static Random rng = new Random();
 	
