@@ -239,6 +239,7 @@ implements ActionListener, MetronomeListener
         music = new JButton(MUSIC + ": Off");
         music.setBounds(375, 375, 100, 50);
         music.addActionListener(this);
+        music.setActionCommand(MUSIC);
 		contentPane.add(music);
 		
         sound = new JButton(SOUND + ": Off");

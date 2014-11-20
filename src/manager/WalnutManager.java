@@ -1,4 +1,5 @@
 package manager;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
@@ -11,15 +12,16 @@ import visual.dynamic.described.DescribedSprite;
 import visual.statik.TransformableContent;
 import visual.statik.sampled.ContentFactory;
 import content.Walnut;
-public class WalnutManager extends DescribedSprite
 
-implements MouseListener
+public class WalnutManager extends DescribedSprite
+						   implements MouseListener
 {
-	private ArrayList<Walnut> walnuts;
+    private static Random rng = new Random();
+	private ArrayList<Walnut> walnuts, nutsToRemove;
 	private TransformableContent walnutImage;
 	private Boolean running;
-	private int currentX, currentY, height, spawnX, spawnY, width;
-	private static Random rng = new Random();
+	private int height, spawnX, spawnY;
+	private double spawnTimer;
 	
 	// current num of walnuts being rendered
 	private int currentWalnuts;
@@ -41,6 +43,11 @@ implements MouseListener
 	/* to be used by frustration */
 	private int walnutsMissed;
 	
+	// X-coordinate of mouse on mousePressed action
+	private int mouseX;
+	
+	// Y-coordinate of mouse on mousePressed action
+	private int mouseY;
 	/*
 	 *  Level variables
 	 *  
@@ -50,7 +57,11 @@ implements MouseListener
 	 *  walnutSpeed - speed the walnut falls
 	 */
 	private int totalWalnuts;
-	private double spawnTime, spawnTimer, growTime, walnutSpeed;
+	private double spawnTime, growTime, walnutSpeed;
+	
+	//debugging
+	private int currentWalnut = 0;
+	
 	public WalnutManager()
 	{
 		this(0, 0, null);
@@ -60,78 +71,37 @@ implements MouseListener
 	{
 		walnutImage = contentFactory.createContent("walnut.png", 4);
 		walnuts = new ArrayList<Walnut>();
+		nutsToRemove = new ArrayList<Walnut>();
+		
 		running = false;
-		//to pass in
+		
 		spawnX = 450;
 		spawnY = 300;
-		spawnTime = 45;
-		spawnTimer = 0.75 * 60;
-		this.height = height;
-		this.width = width;
+		
+		//init values
+		currentWalnuts = 0;
+		walnutsSpawned = 0;
+		walnutsRemoved = 0;
+		walnutsCollected = 0;
+		walnutsMissed = 0;
+			
+		//default level values
+		spawnTime = 0.75 * 60;
+		growTime = 1;
+		totalWalnuts = 10;
+		walnutSpeed = 3;
 		maxWalnuts = 10;
-	}
-	public void add(double x, double y, int time, int speed)
-	{
-		walnuts.add(new Walnut(walnutImage, x, y, time, speed));
-	}
-	public void remove(Walnut walnut)
-	{
-		walnuts.remove(walnut);
-	}
-	public void start()
-	{
-		running = true;
 		
-
-	}
-	public Walnut getWalnut(int pos)
-	{
-		return walnuts.get(pos);
-	}
-	public void setSpawnTime(int spawnTime)
-	{
-		this.spawnTime = spawnTime;
-	}
-	@Override
-	public void handleTick(int arg0)
-	{
-		if(running && spawnTimer <= 0 && walnuts.size()<maxWalnuts)
-		{
-			//System.out.println("Here: " +  arg0);
-			walnuts.add(new Walnut(walnutImage, rng.nextInt(spawnX) + 10, rng.nextInt(spawnY), 30, 5));
-			spawnTimer = spawnTime; //to pass in
-		}
-		//render()
-		spawnTimer--;
+		spawnTimer = spawnTime;
+		this.height = height;
 	}
 	
-	public void render(Graphics g)
+	public void add(int x, int y, double growTime, double walnutSpeed, int id)
 	{
-		//System.out.println("Oi!");
-		Graphics2D g2;
-		g2 = (Graphics2D) g;
-		//System.out.println("Here");
-		Iterator<Walnut> i;
-		i = walnuts.iterator();
-		
-		ArrayList<Walnut> nutsToRemove = new ArrayList<Walnut>();
-		while(i.hasNext())
-		{
-			//System.out.println("Here");
-			Walnut tempNut;
-			tempNut = i.next();
-			tempNut.handleTick(0);
-			if((int)tempNut.getY() >= height || tempNut.toDelete() == true)
-			{
-				nutsToRemove.add(tempNut);
-			}
-			else
-				tempNut.render(g2);
-		}
-		
-		removeNuts(nutsToRemove);
-	}	
+		walnuts.add(new Walnut(walnutImage, x, y, growTime, walnutSpeed, id));
+	}
 	
+	//add Mode for flat rate, additive rate, multiplicative rate
 	public void changeLevel(double spawnTime, double growTime, int totalWalnuts, double walnutSpeed)
 	{
 		this.spawnTime = spawnTime * 60;
@@ -139,54 +109,152 @@ implements MouseListener
 		this.totalWalnuts = totalWalnuts;
 		this.walnutSpeed = walnutSpeed;
 	}
-
-	public void removeNuts(ArrayList<Walnut> nutsToRemove)
+	
+	public void clearWalnuts()
 	{
-		int removed;
-		removed = 0;
+		Iterator<Walnut> i;
+		i = walnuts.iterator();
+		
+		while(i.hasNext())
+		{		
+			Walnut tempNut;
+			
+			tempNut = i.next();
+			nutsToRemove.add(tempNut);
+		}
+		
+		removeNuts();
+	}
+	
+	@Override
+	public void handleTick(int arg0)
+	{		
+		if(running)
+		{
+			if(walnutsRemoved >= totalWalnuts)
+			{
+				this.stop();
+				this.clearWalnuts();
+				this.resetValues();
+			}
+			else
+			{
+				if(spawnTimer <= 0 && (walnutsSpawned < totalWalnuts) )
+				{
+					if(currentWalnuts < maxWalnuts)
+					{
+						this.add(rng.nextInt(spawnX) + 10, rng.nextInt(spawnY), growTime, walnutSpeed, currentWalnut);
+						currentWalnuts++;
+						walnutsSpawned++;
+						
+						//debugging
+						currentWalnut++;
+					}
+					
+					spawnTimer = spawnTime;
+				}
+				else
+				{
+					spawnTimer--;
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void render(Graphics g)
+	{
+		Graphics2D g2;		
+		g2 = (Graphics2D) g;
 		
 		Iterator<Walnut> i;
+		i = walnuts.iterator();
+		
+		while(i.hasNext())
+		{
+			Walnut tempNut;
+			
+			tempNut = i.next();
+			tempNut.handleTick(0);
+			
+			if((int)tempNut.getY() >= height)
+			{
+				nutsToRemove.add(tempNut);
+				walnutsMissed++;
+				walnutsRemoved++;
+			}
+			else
+				tempNut.render(g2);
+		}
+		
+		removeNuts();
+	}
+
+	public void remove(Walnut walnut)
+	{
+		walnuts.remove(walnut);
+		currentWalnuts--;
+	}
+
+	public void removeNuts()
+	{
+		Iterator<Walnut> i;
 		i = nutsToRemove.iterator();
+		while(i.hasNext())
+		{			
+			Walnut tempNut;
+			tempNut = i.next();
+			remove(tempNut);
+		}
+	}
+	
+	public void resetValues()
+	{
+		currentWalnuts = 0;
+		walnutsSpawned = 0;
+		walnutsRemoved = 0;
+		walnutsCollected = 0;
+		walnutsMissed = 0;
+	}
+	
+	public void start()
+	{
+		running = true;
+	}
+	
+	public void stop()
+	{
+		running = false;
+	}
+	
+	public void setSpawnTime(int spawnTime)
+	{
+		this.spawnTime = spawnTime;
+	}
+	
+	public void mouseClicked(MouseEvent event) {}
+	public void mouseEntered(MouseEvent event) {}
+	public void mouseExited(MouseEvent event) {}
+	public void mousePressed(MouseEvent event) 
+	{
+		mouseX = event.getX();
+		mouseY = event.getY();
+		
+		Iterator<Walnut> i;
+		i = walnuts.iterator();
+		
 		while(i.hasNext())
 		{
 			Walnut tempNut;
 			tempNut = i.next();
-			remove(tempNut);
-			removed += 1;
-			System.out.println("Number of nuts: " + walnuts.size() + "Nuts removed: " + removed);
-		}
-	}
-
-	public void mouseClicked(MouseEvent e) {}
-	public void mousePressed(MouseEvent e) 
-	{
-		//System.out.println("Event-1");
-		//toDelete = true;
-		currentX = e.getX();
-		currentY = e.getY();
-		Walnut tempNut;
-		Iterator<Walnut> i;
-		ArrayList<Walnut> nutsToRemove = new ArrayList<Walnut>();
-		System.out.println("Mouse click:" + currentX + ", " + currentY);
-		i = walnuts.iterator();
-		while(i.hasNext())
-		{
-			System.out.println("Inside Walnuts");
-			tempNut = i.next();
-			//if((currentX>= tempNut.getX() && currentX <= (tempNut.getX() + tempNut.getWidth())) && (currentY>= tempNut.getY() && currentY <= (tempNut.getY() + tempNut.getHeight())))
-			if(tempNut.inBounds(currentX, currentY))
+			if(tempNut.inBounds(mouseX, mouseY))
 			{
-				System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-				tempNut.setDeleteTrue();
-				//remove(tempNut);
 				nutsToRemove.add(tempNut);
-			
+				walnutsCollected++;
+				walnutsRemoved++;
 			}
 		}
-	
-		removeNuts(nutsToRemove);
+		removeNuts();
 	}
-	public void mouseReleased(MouseEvent e) {}
-	public void mouseEntered(MouseEvent e) {}
-	public void mouseExited(MouseEvent e) {}
+	public void mouseReleased(MouseEvent event) {}
 }
