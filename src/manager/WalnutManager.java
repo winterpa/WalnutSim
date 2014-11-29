@@ -90,7 +90,7 @@ public class WalnutManager extends DescribedSprite
 		growTime = 1;
 		totalWalnuts = 10;
 		walnutSpeed = 3;
-		maxWalnuts = 10;
+		maxWalnuts = 30;
 		
 		spawnTimer = spawnTime;
 		this.height = height;
