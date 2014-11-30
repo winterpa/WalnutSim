@@ -1,10 +1,12 @@
 import io.ResourceFinder;
 
 import java.awt.event.*;
+import java.util.*;
 
 import javax.swing.*;
 
 import manager.WalnutManager;
+import manager.LevelManager;
 
 import visual.VisualizationView;
 import visual.dynamic.described.Stage;
@@ -23,6 +25,7 @@ implements ActionListener, MetronomeListener
 	private static final String EXIT = "Exit Game";
 	private static final String BACK = "Back";
 	private static final String MUSIC = "Music";
+	private static final String NEXT = "Next Level";
 	private static final String SOUND = "Sound";
 	private static final String LEVEL_ONE = "Level 1";
 	private static final String LEVEL_TWO = "Level 2";
@@ -43,6 +46,10 @@ implements ActionListener, MetronomeListener
 	private VisualizationView 	stageView;
 	private WalnutManager		walnutManager;
 	
+	private double[]            level;
+	private int                 levelId;
+	private LevelManager        levels;
+	
 	public void actionPerformed(ActionEvent event)
 	{
 		String actionCommand;
@@ -54,8 +61,12 @@ implements ActionListener, MetronomeListener
 			contentPane.removeAll();
 			contentPane.repaint();
 			
+			levels.changeLevel(1);
+			
 			contentPane.add(stageView);
 			walnutManager.start();
+			
+			
 		}
 		else if(actionCommand.equals(SELECT))
 		{
@@ -130,7 +141,7 @@ implements ActionListener, MetronomeListener
 			
 			contentPane.add(stageView);
 			
-			walnutManager.changeLevel(0.75, 1, 10, 1.5);
+			levels.changeLevel(1);
 			walnutManager.start();
 		}
 		else if(actionCommand.equals(LEVEL_TWO))
@@ -140,7 +151,7 @@ implements ActionListener, MetronomeListener
 			
 			contentPane.add(stageView);
 			
-			walnutManager.changeLevel(0.35, 1.5, 50, 1);
+			levels.changeLevel(2);
 			walnutManager.start();
 		}
 		else if(actionCommand.equals(LEVEL_THREE))
@@ -150,8 +161,17 @@ implements ActionListener, MetronomeListener
 			
 			contentPane.add(stageView);
 			
-			walnutManager.changeLevel(0.25, 2, 90000, 5);
+			levels.changeLevel(3);
 			walnutManager.start();
+		}
+		else if(actionCommand.equals(NEXT))
+		{
+		    contentPane.removeAll();
+		    contentPane.repaint();
+		    levelId = levels.getLevelId();
+		    walnutManager.nextLevel(levels.changeLevel(levelId));
+			//Change level to the next if able (last level should return to main page
+		    //and start the next level
 		}
 	}
 	
@@ -203,11 +223,15 @@ implements ActionListener, MetronomeListener
 		walnutManager = new WalnutManager(width, height, contentFactory);
 		stage.add(walnutManager);
 	    stage.addMouseListener(walnutManager);
+	    
+	    levels = walnutManager.getLevelManager();
 		
 		createMainMenu();
 
 		contentPane.add(stageView);
-		
+//level adding
+//
+//
 		stage.start();
 	}
 	

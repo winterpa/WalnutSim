@@ -12,6 +12,9 @@ import visual.dynamic.described.DescribedSprite;
 import visual.statik.TransformableContent;
 import visual.statik.sampled.ContentFactory;
 import content.Walnut;
+import content.TransitionPage;
+
+import manager.LevelManager;
 
 public class WalnutManager extends DescribedSprite
 						   implements MouseListener
@@ -21,6 +24,7 @@ public class WalnutManager extends DescribedSprite
 	private TransformableContent walnutImage;
 	private Boolean running;
 	private int height, spawnX, spawnY;
+	private double[] currentLevel;
 	private double spawnTimer;
 	
 	// current num of walnuts being rendered
@@ -59,8 +63,13 @@ public class WalnutManager extends DescribedSprite
 	private int totalWalnuts;
 	private double spawnTime, growTime, walnutSpeed;
 	
+	private int id;
+	
+	private LevelManager levels;
+	
 	//debugging
 	private int currentWalnut = 0;
+	
 	
 	public WalnutManager()
 	{
@@ -69,6 +78,11 @@ public class WalnutManager extends DescribedSprite
 	
 	public WalnutManager(int width, int height, ContentFactory contentFactory)
 	{
+		levels = new LevelManager();
+		levels.addLevel(1, 0.75, 1, 10, 1.5);
+		levels.addLevel(2, 0.35, 1.5, 50, 1);
+		levels.addLevel(3, 0.25, 2, 90000, 5);
+		
 		walnutImage = contentFactory.createContent("walnut.png", 4);
 		walnuts = new ArrayList<Walnut>();
 		nutsToRemove = new ArrayList<Walnut>();
@@ -91,9 +105,11 @@ public class WalnutManager extends DescribedSprite
 		totalWalnuts = 10;
 		walnutSpeed = 3;
 		maxWalnuts = 10;
+		id = levels.getLevelId();
 		
 		spawnTimer = spawnTime;
 		this.height = height;
+		
 	}
 	
 	public void add(int x, int y, double growTime, double walnutSpeed, int id)
@@ -101,7 +117,7 @@ public class WalnutManager extends DescribedSprite
 		walnuts.add(new Walnut(walnutImage, x, y, growTime, walnutSpeed, id));
 	}
 	
-	//add Mode for flat rate, additive rate, multiplicative rate
+	/*//add Mode for flat rate, additive rate, multiplicative rate
 	public void changeLevel(double spawnTime, double growTime, int totalWalnuts, double walnutSpeed)
 	{
 		this.spawnTime = spawnTime * 60;
@@ -109,7 +125,7 @@ public class WalnutManager extends DescribedSprite
 		this.totalWalnuts = totalWalnuts;
 		this.walnutSpeed = walnutSpeed;
 	}
-	
+	*/
 	public void clearWalnuts()
 	{
 		Iterator<Walnut> i;
@@ -131,10 +147,15 @@ public class WalnutManager extends DescribedSprite
 	{		
 		if(running)
 		{
-			if(walnutsRemoved >= totalWalnuts)
+			if(walnutsRemoved >= totalWalnuts || walnutsCollected == 5)
 			{
 				this.stop();
 				this.clearWalnuts();
+				if(walnutsCollected == 5)
+				{
+					System.out.println("Here");
+					transition();
+				}
 				this.resetValues();
 			}
 			else
@@ -161,6 +182,16 @@ public class WalnutManager extends DescribedSprite
 		}
 	}
 	
+	public void nextLevel(double[] level)
+	{
+		currentLevel = level;
+		this.spawnTime = currentLevel[0];
+		this.growTime = currentLevel[1];
+		this.totalWalnuts = (int)currentLevel[2];
+	    this.walnutSpeed = currentLevel[3];
+	    this.id = (int)currentLevel[4];
+	    start();
+	}
 	@Override
 	public void render(Graphics g)
 	{
@@ -230,6 +261,22 @@ public class WalnutManager extends DescribedSprite
 	public void setSpawnTime(int spawnTime)
 	{
 		this.spawnTime = spawnTime;
+	}
+	
+	public void transition()
+	{
+		TransitionPage transitionPage;
+		transitionPage = new TransitionPage(this, levels, id, 0, true);
+		
+	}
+	
+	public LevelManager getLevelManager()
+	{
+		return levels;
+	}
+	public void gameOver()
+	{
+		
 	}
 	
 	public void mouseClicked(MouseEvent event) {}
