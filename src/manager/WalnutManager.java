@@ -70,6 +70,9 @@ public class WalnutManager extends DescribedSprite
 	//debugging
 	private int currentWalnut = 0;
 	
+	//Number of walnuts we can miss in a level
+	private final int maxCanMiss = 10;
+	
 	
 	public WalnutManager()
 	{
@@ -104,12 +107,10 @@ public class WalnutManager extends DescribedSprite
 		growTime = 1;
 		totalWalnuts = 10;
 		walnutSpeed = 3;
-<<<<<<< HEAD
 		maxWalnuts = 10;
 		id = levels.getLevelId();
-=======
 		maxWalnuts = 30;
->>>>>>> 8804769be4f0b597ae53e2053aa0fc93f11b7697
+
 		
 		spawnTimer = spawnTime;
 		this.height = height;
@@ -151,7 +152,7 @@ public class WalnutManager extends DescribedSprite
 	{		
 		if(running)
 		{
-			if(walnutsRemoved >= totalWalnuts || walnutsCollected == 5)
+			if(walnutsRemoved >= totalWalnuts || walnutsCollected == 5 || walnutsMissed == maxCanMiss)
 			{
 				this.stop();
 				this.clearWalnuts();
@@ -159,6 +160,10 @@ public class WalnutManager extends DescribedSprite
 				{
 					System.out.println("Here");
 					transition();
+				}
+				else if(walnutsMissed == maxCanMiss)
+				{
+					
 				}
 				this.resetValues();
 			}

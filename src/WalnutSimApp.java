@@ -2,11 +2,11 @@ import io.ResourceFinder;
 
 import java.awt.Image;
 import java.awt.event.*;
-<<<<<<< HEAD
+
 import java.util.*;
-=======
+
 import java.io.IOException;
->>>>>>> 8804769be4f0b597ae53e2053aa0fc93f11b7697
+
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -150,12 +150,10 @@ implements ActionListener, MetronomeListener
 			
 			contentPane.add(stageView);
 			
-<<<<<<< HEAD
+
 			levels.changeLevel(1);
-=======
 			walnutManager.clearWalnuts();
-			walnutManager.changeLevel(0.75, 1, 10, 1.5);
->>>>>>> 8804769be4f0b597ae53e2053aa0fc93f11b7697
+			//walnutManager.changeLevel(0.75, 1, 10, 1.5);
 			walnutManager.start();
 		}
 		else if(actionCommand.equals(LEVEL_TWO))
@@ -165,12 +163,9 @@ implements ActionListener, MetronomeListener
 			
 			contentPane.add(stageView);
 			
-<<<<<<< HEAD
 			levels.changeLevel(2);
-=======
 			walnutManager.clearWalnuts();
-			walnutManager.changeLevel(0.35, 1.5, 50, 1);
->>>>>>> 8804769be4f0b597ae53e2053aa0fc93f11b7697
+			//walnutManager.changeLevel(0.35, 1.5, 50, 1);
 			walnutManager.start();
 		}
 		else if(actionCommand.equals(LEVEL_THREE))
@@ -180,12 +175,9 @@ implements ActionListener, MetronomeListener
 			
 			contentPane.add(stageView);
 			
-<<<<<<< HEAD
 			levels.changeLevel(3);
-=======
 			walnutManager.clearWalnuts();
-			walnutManager.changeLevel(0.25, 2, 90000, 5);
->>>>>>> 8804769be4f0b597ae53e2053aa0fc93f11b7697
+			//walnutManager.changeLevel(0.25, 2, 90000, 5);
 			walnutManager.start();
 		}
 		else if(actionCommand.equals(NEXT))
@@ -245,7 +237,9 @@ implements ActionListener, MetronomeListener
 		stage.add(background);
 		
 		walnutManager = new WalnutManager(width, height, contentFactory);
-		walnutManager.changeLevel(5, 1, 9999, 2);
+		
+		//walnutManager.changeLevel(5, 1, 9999, 2);
+		
 		walnutManager.start();
 		stage.add(walnutManager);
 	    stage.addMouseListener(walnutManager);
