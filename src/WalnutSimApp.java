@@ -13,6 +13,7 @@ import javax.swing.*;
 
 import manager.WalnutManager;
 import manager.LevelManager;
+import content.TransitionPage;
 
 import visual.VisualizationView;
 import visual.dynamic.described.Stage;
@@ -43,7 +44,7 @@ implements ActionListener, MetronomeListener
 	
 	private boolean				hasSound, hasMusic;
 	int                 		height, width;	
-	JButton		        		back, exit, music, options, select, sound, start, logo;
+	JButton		        		back, exit, music, options, select, sound, start, logo, next;
 	JButton						level_one, level_two, level_three;
 	JPanel		        		contentPane, selectScreen, optionsScreen;
 	private Content     		background, imgStart, imgSelect, imgOptions, imgExit;
@@ -57,6 +58,12 @@ implements ActionListener, MetronomeListener
 	private int                 levelId;
 	private LevelManager        levels;
 	
+	private boolean             levelRunning;
+	
+	private TransitionPage      transitionPage;
+	private final int           numberOfLevels = 3;
+	private Metronome           internalClock;
+	
 	public void actionPerformed(ActionEvent event)
 	{
 		String actionCommand;
@@ -65,15 +72,8 @@ implements ActionListener, MetronomeListener
 		if(actionCommand.equals(START))
 		{
 			//Start 1st level
-			contentPane.removeAll();
-			contentPane.repaint();
-			
-			levels.changeLevel(1);
-			
-			contentPane.add(stageView);
-			
-			walnutManager.clearWalnuts();
-			walnutManager.start();
+			levelId = 1;
+			startLevel(levelId);
 			
 			
 		}
@@ -145,47 +145,32 @@ implements ActionListener, MetronomeListener
 		}
 		else if(actionCommand.equals(LEVEL_ONE))
 		{
-			contentPane.removeAll();
-			contentPane.repaint();
-			
-			contentPane.add(stageView);
-			
-
-			levels.changeLevel(1);
-			walnutManager.clearWalnuts();
-			//walnutManager.changeLevel(0.75, 1, 10, 1.5);
-			walnutManager.start();
+			levelId = 1;
+			startLevel(levelId);
 		}
 		else if(actionCommand.equals(LEVEL_TWO))
 		{
-			contentPane.removeAll();
-			contentPane.repaint();
-			
-			contentPane.add(stageView);
-			
-			levels.changeLevel(2);
-			walnutManager.clearWalnuts();
-			//walnutManager.changeLevel(0.35, 1.5, 50, 1);
-			walnutManager.start();
+			levelId = 2;
+			startLevel(levelId);
 		}
 		else if(actionCommand.equals(LEVEL_THREE))
 		{
-			contentPane.removeAll();
-			contentPane.repaint();
-			
-			contentPane.add(stageView);
-			
-			levels.changeLevel(3);
-			walnutManager.clearWalnuts();
-			//walnutManager.changeLevel(0.25, 2, 90000, 5);
-			walnutManager.start();
+			levelId = 3;
+			startLevel(levelId);
 		}
 		else if(actionCommand.equals(NEXT))
 		{
 		    contentPane.removeAll();
 		    contentPane.repaint();
 		    levelId = levels.getLevelId();
-		    walnutManager.nextLevel(levels.changeLevel(levelId));
+		    if(levelId < numberOfLevels)
+		    {
+		    	walnutManager.nextLevel(levels.changeLevel(levelId));
+		    }
+		    else
+		    {
+		    	createMainMenu();
+		    }
 			//Change level to the next if able (last level should return to main page
 		    //and start the next level
 		}
@@ -211,7 +196,24 @@ implements ActionListener, MetronomeListener
 	
 	public void handleTick(int millis)
 	{
-		return;
+		levelRunning = walnutManager.isRunning();
+		System.out.println(levelRunning);
+		if(!levelRunning)
+		{
+			System.out.println("Here");
+			if(walnutManager.isStageClear())
+			{
+				createNextButton();
+			}
+			else
+			{
+				createBackButton();
+			}
+			
+			transitionPage = new TransitionPage(walnutManager, levels, levelId, 0 ,walnutManager.isStageClear());
+			stage.add(transitionPage);
+			contentPane.add(stageView);
+		}
 	}
 	
 	public void init()
@@ -240,9 +242,17 @@ implements ActionListener, MetronomeListener
 		
 		//walnutManager.changeLevel(5, 1, 9999, 2);
 		
+		//I want to start the internalClock metronome but there are thread issues
+		//This line of code can be removed and the game will function 
+		//No transition pages are yet being displayed.
+		SwingUtilities.invokeLater(internalClock.start());
+		//^problem code above
+		
 		walnutManager.start();
 		stage.add(walnutManager);
 	    stage.addMouseListener(walnutManager);
+	    
+	    //stage.add(transitionPage);
 	    
 	    levels = walnutManager.getLevelManager();
 		
@@ -364,5 +374,25 @@ implements ActionListener, MetronomeListener
 		back.setBounds(375, 525, 100, 50);
 		back.addActionListener(this);
 		contentPane.add(back);
+	}
+	public void createNextButton()
+	{
+		next = new JButton(NEXT);
+		next.setBounds(375, 525, 100, 50);
+		next.addActionListener(this);
+		contentPane.add(next);
+	}
+	public void startLevel(int levelId)
+	{
+		contentPane.removeAll();
+		contentPane.repaint();
+		
+		levels.changeLevel(levelId);
+		
+		contentPane.add(stageView);
+		
+		walnutManager.clearWalnuts();
+		walnutManager.resetValues();
+		walnutManager.start();
 	}
 }

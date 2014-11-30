@@ -18,12 +18,14 @@ import java.util.*;
 import visual.statik.described.*;
 import visual.statik.sampled.Content;
 import manager.*;
-
 import visual.VisualizationView;
+import visual.dynamic.described.RuleBasedSprite;
 import visual.dynamic.described.Stage;
 
+import visual.statik.TransformableContent;
+
 import javax.swing.*;
-public class TransitionPage{
+public class TransitionPage extends Content{
 
 	private int level, score;
 	private boolean stageClear;
@@ -45,20 +47,12 @@ public class TransitionPage{
 		this.stageClear = stageClear;
 		if(stageClear)
 		{
-			this.text = "You have cleared Level " + level;
-			next = new JButton(NEXT);
-	        next.setBounds(375, 300, 100, 50);
-	        next.setActionCommand(NEXT);
-	       // next.addActionListener(this);
+			this.text = "You have cleared Level " + level + " with a score of: " + score;
 			
 		}
 		else
 		{
-			this.text = "You have failed Level" + level;
-			back = new JButton(BACK);
-			back.setBounds(375, 375, 100, 50);
-			//back.addActionListener(this);
-			contentPane.add(back);
+			this.text = "You have failed Level " + level + " with a score of: " + score;
 		}
 	}
 	

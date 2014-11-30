@@ -70,8 +70,14 @@ public class WalnutManager extends DescribedSprite
 	//debugging
 	private int currentWalnut = 0;
 	
+	//Records if we have cleared the stage when we go to a transition page
+	private boolean stageClear;
+	
 	//Number of walnuts we can miss in a level
 	private final int maxCanMiss = 10;
+	
+	//Number of walnuts to collect to win the level
+	private final int walnutsToWin = 5;
 	
 	
 	public WalnutManager()
@@ -110,6 +116,8 @@ public class WalnutManager extends DescribedSprite
 		maxWalnuts = 10;
 		id = levels.getLevelId();
 		maxWalnuts = 30;
+		
+		stageClear = false;
 
 		
 		spawnTimer = spawnTime;
@@ -147,25 +155,38 @@ public class WalnutManager extends DescribedSprite
 		removeNuts();
 	}
 	
+	public boolean isRunning()
+	{
+		return running;
+	}
+	
+	public boolean isStageClear()
+	{
+		return stageClear;
+	}
 	@Override
 	public void handleTick(int arg0)
 	{		
 		if(running)
 		{
-			if(walnutsRemoved >= totalWalnuts || walnutsCollected == 5 || walnutsMissed == maxCanMiss)
-			{
-				this.stop();
+			//System.out.println("Walnuts Missed: " + walnutsMissed);
+			//System.out.println("Walnuts Collected: " + walnutsCollected);
+			if(walnutsRemoved >= totalWalnuts || walnutsCollected >= walnutsToWin || walnutsMissed == maxCanMiss)
+			{				
 				this.clearWalnuts();
-				if(walnutsCollected == 5)
+				
+				if(walnutsCollected == walnutsToWin)
 				{
-					System.out.println("Here");
-					transition();
+					stageClear = true;
+					System.out.println("Stage clear is " + stageClear);
+					reset();
 				}
 				else if(walnutsMissed == maxCanMiss)
 				{
-					
+					stageClear = false;
+					System.out.println("Stage clear is " + stageClear);
+					reset();
 				}
-				this.resetValues();
 			}
 			else
 			{
@@ -189,6 +210,12 @@ public class WalnutManager extends DescribedSprite
 				}
 			}
 		}
+	}
+	
+	public void reset()
+	{
+		this.resetValues();
+		this.stop();
 	}
 	
 	public void nextLevel(double[] level)
