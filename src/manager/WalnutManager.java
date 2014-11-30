@@ -104,8 +104,12 @@ public class WalnutManager extends DescribedSprite
 		growTime = 1;
 		totalWalnuts = 10;
 		walnutSpeed = 3;
+<<<<<<< HEAD
 		maxWalnuts = 10;
 		id = levels.getLevelId();
+=======
+		maxWalnuts = 30;
+>>>>>>> 8804769be4f0b597ae53e2053aa0fc93f11b7697
 		
 		spawnTimer = spawnTime;
 		this.height = height;
