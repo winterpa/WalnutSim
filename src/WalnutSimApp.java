@@ -1,10 +1,19 @@
 import io.ResourceFinder;
 
+import java.awt.Image;
 import java.awt.event.*;
 
+import java.util.*;
+
+import java.io.IOException;
+
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import manager.WalnutManager;
+import manager.LevelManager;
+import content.TransitionPage;
 
 import visual.VisualizationView;
 import visual.dynamic.described.Stage;
@@ -23,7 +32,9 @@ implements ActionListener, MetronomeListener
 	private static final String EXIT = "Exit Game";
 	private static final String BACK = "Back";
 	private static final String MUSIC = "Music";
+	private static final String NEXT = "Next Level";
 	private static final String SOUND = "Sound";
+	private static final String LOGO = "Logo";
 	private static final String LEVEL_ONE = "Level 1";
 	private static final String LEVEL_TWO = "Level 2";
 	private static final String LEVEL_THREE = "Level 3";
@@ -33,15 +44,25 @@ implements ActionListener, MetronomeListener
 	
 	private boolean				hasSound, hasMusic;
 	int                 		height, width;	
-	JButton		        		back, exit, music, options, select, sound, start;
+	JButton		        		back, exit, music, options, select, sound, start, logo, next;
 	JButton						level_one, level_two, level_three;
 	JPanel		        		contentPane, selectScreen, optionsScreen;
-	private Content     		background;
+	private Content     		background, imgStart, imgSelect, imgOptions, imgExit;
 	private ResourceFinder  	finder;
 	private ContentFactory  	contentFactory;
 	private Stage  				stage;
 	private VisualizationView 	stageView;
 	private WalnutManager		walnutManager;
+	
+	private double[]            level;
+	private int                 levelId;
+	private LevelManager        levels;
+	
+	private boolean             levelRunning;
+	
+	private TransitionPage      transitionPage;
+	private final int           numberOfLevels = 3;
+	private Metronome           internalClock;
 	
 	public void actionPerformed(ActionEvent event)
 	{
@@ -51,11 +72,10 @@ implements ActionListener, MetronomeListener
 		if(actionCommand.equals(START))
 		{
 			//Start 1st level
-			contentPane.removeAll();
-			contentPane.repaint();
+			levelId = 1;
+			startLevel(levelId);
 			
-			contentPane.add(stageView);
-			walnutManager.start();
+			
 		}
 		else if(actionCommand.equals(SELECT))
 		{
@@ -125,33 +145,34 @@ implements ActionListener, MetronomeListener
 		}
 		else if(actionCommand.equals(LEVEL_ONE))
 		{
-			contentPane.removeAll();
-			contentPane.repaint();
-			
-			contentPane.add(stageView);
-			
-			walnutManager.changeLevel(0.75, 1, 10, 1.5);
-			walnutManager.start();
+			levelId = 1;
+			startLevel(levelId);
 		}
 		else if(actionCommand.equals(LEVEL_TWO))
 		{
-			contentPane.removeAll();
-			contentPane.repaint();
-			
-			contentPane.add(stageView);
-			
-			walnutManager.changeLevel(0.35, 1.5, 50, 1);
-			walnutManager.start();
+			levelId = 2;
+			startLevel(levelId);
 		}
 		else if(actionCommand.equals(LEVEL_THREE))
 		{
-			contentPane.removeAll();
-			contentPane.repaint();
-			
-			contentPane.add(stageView);
-			
-			walnutManager.changeLevel(0.25, 2, 90000, 5);
-			walnutManager.start();
+			levelId = 3;
+			startLevel(levelId);
+		}
+		else if(actionCommand.equals(NEXT))
+		{
+		    contentPane.removeAll();
+		    contentPane.repaint();
+		    levelId = levels.getLevelId();
+		    if(levelId < numberOfLevels)
+		    {
+		    	walnutManager.nextLevel(levels.changeLevel(levelId));
+		    }
+		    else
+		    {
+		    	createMainMenu();
+		    }
+			//Change level to the next if able (last level should return to main page
+		    //and start the next level
 		}
 	}
 	
@@ -175,7 +196,24 @@ implements ActionListener, MetronomeListener
 	
 	public void handleTick(int millis)
 	{
-		return;
+		levelRunning = walnutManager.isRunning();
+		System.out.println(levelRunning);
+		if(!levelRunning)
+		{
+			System.out.println("Here");
+			if(walnutManager.isStageClear())
+			{
+				createNextButton();
+			}
+			else
+			{
+				createBackButton();
+			}
+			
+			transitionPage = new TransitionPage(walnutManager, levels, levelId, 0 ,walnutManager.isStageClear());
+			stage.add(transitionPage);
+			contentPane.add(stageView);
+		}
 	}
 	
 	public void init()
@@ -201,36 +239,97 @@ implements ActionListener, MetronomeListener
 		stage.add(background);
 		
 		walnutManager = new WalnutManager(width, height, contentFactory);
+		
+		//walnutManager.changeLevel(5, 1, 9999, 2);
+		
+		//I want to start the internalClock metronome but there are thread issues
+		//This line of code can be removed and the game will function 
+		//No transition pages are yet being displayed.
+		SwingUtilities.invokeLater(internalClock.start());
+		//^problem code above
+		
+		walnutManager.start();
 		stage.add(walnutManager);
 	    stage.addMouseListener(walnutManager);
+	    
+	    //stage.add(transitionPage);
+	    
+	    levels = walnutManager.getLevelManager();
 		
 		createMainMenu();
 
 		contentPane.add(stageView);
-		
+//level adding
+//
+//
 		stage.start();
 	}
 	
 	public void createMainMenu()
 	{
-		start = new JButton(START);
-		start.setBounds(375, 300, 100, 50);
-		start.addActionListener(this);
-		contentPane.add(start);
+		logo = new JButton(LOGO);
+		logo.setBounds(50, 50, 425, 125);
+		logo.addActionListener(this);
+		  try {
+		    Image img = ImageIO.read(getClass().getResource("logo.png"));
+		    logo.setIcon(new ImageIcon(img));
+		    logo.setOpaque(false);
+		    logo.setContentAreaFilled(false);
+		    logo.setBorderPainted(false);
+		  } catch (IOException ex) {
+		  } catch (IllegalArgumentException ex) {}
+		contentPane.add(logo);
 		
+		start = new JButton(START);
+		start.setBounds(150, 300, 225, 50);
+		start.addActionListener(this);
+		  try {
+		    Image img = ImageIO.read(getClass().getResource("start.png"));
+		    start.setIcon(new ImageIcon(img));
+		    start.setOpaque(false);
+		    start.setContentAreaFilled(false);
+		    start.setBorderPainted(false);
+		  } catch (IOException ex) {
+		  } catch (IllegalArgumentException ex) {}
+		contentPane.add(start);
+	
         select = new JButton(SELECT);
-		select.setBounds(375, 375, 100, 50);
+		select.setBounds(130, 380, 250, 50);
 		select.addActionListener(this);
+		  try {
+		    Image img = ImageIO.read(getClass().getResource("select.png"));
+		    select.setIcon(new ImageIcon(img));
+			select.setOpaque(false);
+			select.setContentAreaFilled(false);
+			select.setBorderPainted(false);
+		  } catch (IOException ex) {
+		  } catch (IllegalArgumentException ex) {}
 		contentPane.add(select);
-     
-        options = new JButton(OPTIONS);
-		options.setBounds(375, 450, 100, 50);
+		
+		options = new JButton(OPTIONS);
+		options.setBounds(90, 460, 325, 50);
 		options.addActionListener(this);
+		  try {
+		    Image img = ImageIO.read(getClass().getResource("options.png"));
+		    options.setIcon(new ImageIcon(img));
+		    options.setOpaque(false);
+		    options.setContentAreaFilled(false);
+		    options.setBorderPainted(false);
+		  } catch (IOException ex) {
+		  } catch (IllegalArgumentException ex) {}
 		contentPane.add(options);
-     
-        exit = new JButton(EXIT);
-		exit.setBounds(375, 600, 100, 50);
+		
+		exit = new JButton(EXIT);
+		exit.setBounds(170, 580, 175, 50);
 		exit.addActionListener(this);
+		  try {
+		    Image img = ImageIO.read(getClass().getResource("exit.png"));
+		    exit.setIcon(new ImageIcon(img));
+		    exit.setOpaque(false);
+		    exit.setContentAreaFilled(false);
+		    exit.setBorderPainted(false);
+		  } catch (IOException ex) {
+		  } catch (IllegalArgumentException ex) {}
 		contentPane.add(exit);
 	}
 	
@@ -239,6 +338,7 @@ implements ActionListener, MetronomeListener
         music = new JButton(MUSIC + ": Off");
         music.setBounds(375, 375, 100, 50);
         music.addActionListener(this);
+        music.setActionCommand(MUSIC);
 		contentPane.add(music);
 		
         sound = new JButton(SOUND + ": Off");
@@ -274,5 +374,25 @@ implements ActionListener, MetronomeListener
 		back.setBounds(375, 525, 100, 50);
 		back.addActionListener(this);
 		contentPane.add(back);
+	}
+	public void createNextButton()
+	{
+		next = new JButton(NEXT);
+		next.setBounds(375, 525, 100, 50);
+		next.addActionListener(this);
+		contentPane.add(next);
+	}
+	public void startLevel(int levelId)
+	{
+		contentPane.removeAll();
+		contentPane.repaint();
+		
+		levels.changeLevel(levelId);
+		
+		contentPane.add(stageView);
+		
+		walnutManager.clearWalnuts();
+		walnutManager.resetValues();
+		walnutManager.start();
 	}
 }
