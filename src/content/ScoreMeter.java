@@ -16,6 +16,7 @@ import visual.statik.TransformableContent;
 public class ScoreMeter extends AbstractSprite
 {
 	private String text;
+	private int score;
 	private Font font;
 	
 	public ScoreMeter()
@@ -84,7 +85,8 @@ public class ScoreMeter extends AbstractSprite
 	
 	public void setScore(int score)
 	{
-		this.text = "Score: " + score;
+		this.score = score;
+		this.text = "Score: " + this.score;
 	}
 
 	@Override
@@ -96,8 +98,14 @@ public class ScoreMeter extends AbstractSprite
 	@Override
 	public void handleTick(int arg0) 
 	{
-		Random rng = new Random();
 		
-		setScore(rng.nextInt(200));
+		
+		
+	}
+	
+	public void incrementScore()
+	{
+		this.score++;
+		setScore(this.score);
 	}
 }
