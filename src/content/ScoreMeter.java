@@ -86,7 +86,7 @@ public class ScoreMeter extends AbstractSprite
 	public void setScore(int score)
 	{
 		this.score = score;
-		this.text = "Score: " + this.score;
+		setText("Score: " + this.score);
 	}
 
 	@Override
@@ -98,9 +98,7 @@ public class ScoreMeter extends AbstractSprite
 	@Override
 	public void handleTick(int arg0) 
 	{
-		
-		
-		
+		//Do nothing
 	}
 	
 	public void incrementScore()
