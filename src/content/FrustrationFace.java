@@ -6,11 +6,20 @@ import visual.statik.sampled.ContentFactory;
 
 public class FrustrationFace extends RuleBasedSprite
 {
-	private double						  						   x,y;
+	//The x,y position of the upper left corner of the face
+	private double						  			   x,y;
+	
+	//The time between changes, time left until the face changes, the current face being rendered
 	private int 						  time, timeLeft, curFaceIndex;
-	private ContentFactory 								contentFactory;
-	private TransformableContent							   curFace;
-	private TransformableContent[]								 faces;
+	
+	//The content factory to get the face images with
+	private ContentFactory 							contentFactory;
+	
+	//The current rendered face
+	private TransformableContent						       curFace;
+	
+	//All the faces that will be rendered
+	private TransformableContent[]							 faces;
 	
 		
 	public FrustrationFace()
