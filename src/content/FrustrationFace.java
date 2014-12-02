@@ -11,12 +11,21 @@ public class FrustrationFace extends RuleBasedSprite
 	private ContentFactory 								contentFactory;
 	private TransformableContent							   curFace;
 	private TransformableContent[]								 faces;
+	
 		
 	public FrustrationFace()
 	{
 		this(0.0, 0.0, 0, null);
 	}
 	
+	/**
+	* Explicit Value Constructor
+	*
+	* @param x The left-most coordinate of the bar (in pixels)
+	* @param y The top-most coordinate of the bar (in pixels)
+	* @param time The time between changes poses of the face
+	* @param ContentFactory The factory used to make the image
+	*/
 	public FrustrationFace(double x, double y, int time, ContentFactory contentFactory)
 	{
 		super(null);
@@ -32,6 +41,9 @@ public class FrustrationFace extends RuleBasedSprite
 		curFaceIndex = 0;
 	}
 	
+	/**
+	* Set the content of the face
+	*/
 	private void setContent()
 	{
 		for(int x=0;x<faces.length;x++)
@@ -41,6 +53,11 @@ public class FrustrationFace extends RuleBasedSprite
 		this.content = faces[1];
 	}
 	
+	/**
+	* Ticks down the time between each facial change and changes the face if necessary
+	*
+	* @param arg0 Unused
+	*/
 	@Override
 	public void handleTick(int arg0) 
 	{
