@@ -19,17 +19,30 @@ public class ScoreMeter extends AbstractSprite
 	private int score;
 	private Font font;
 	
+	/**
+	* Default Constructor
+	*/
 	public ScoreMeter()
 	{
 		this(0);
 	}
 	
+	/**
+	* Explicit Value Constructor
+	* 
+	* @param fontSize The point-size to render the font in
+	*/
 	public ScoreMeter(int fontSize)
 	{
 		this.text = "Score: 0";
 		font = new Font("Comic Sans MS", Font.PLAIN, fontSize);
 	}
 	
+	/**
+	* Paint the ScoreMeter's Text
+	* 
+	* @param g Graphics Engine to render with'
+	*/
 	public void paint(Graphics g)
 	{
 		Graphics2D g2;
@@ -54,6 +67,12 @@ public class ScoreMeter extends AbstractSprite
 		if (text != null) paintGlyphs(g2, text);
 	}
 	
+	/**
+	* Draw the shape of the font
+	* 
+	* @param g2 Grpahics Engine to render with
+	* @param text The text to write on the screen
+	*/
 	protected void paintGlyphs(Graphics2D g2, String text)
     	{
 		FontRenderContext       frc;
@@ -73,34 +92,58 @@ public class ScoreMeter extends AbstractSprite
 		g2.draw(shape);
     	}
 	
+	/**
+	* Render the text
+	* 
+	* @param g Graphics Engine to render with
+	*/
 	public void render(Graphics g)
 	{
 		paint(g);
 	}
 	
+	/**
+	* Set the text to render
+	* 
+	* @param text The text to render
+	*/
 	public void setText(String text)
 	{
 		this.text = text;
 	}
 	
+	/**
+	* Set the score to render with the text
+	* 
+	* @param score The score to render with the text
+	*/
 	public void setScore(int score)
 	{
 		this.score = score;
 		setText("Score: " + this.score);
 	}
 
+	/**
+	* Unused Method
+	*/
 	@Override
 	protected TransformableContent getContent() 
 	{
 		return null;
 	}
 
+	/**
+	* Unused Method
+	*/
 	@Override
 	public void handleTick(int arg0) 
 	{
 		//Do nothing
 	}
 	
+	/**
+	* Add a point to the Score Meter
+	*/
 	public void incrementScore()
 	{
 		this.score++;
