@@ -8,13 +8,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
-import sim.WalnutSimApp;
 import visual.dynamic.described.DescribedSprite;
 import visual.statik.TransformableContent;
 import visual.statik.sampled.ContentFactory;
 import content.*;
-
-import manager.LevelManager;
 
 public class WalnutManager extends DescribedSprite
 						   implements MouseListener
@@ -28,7 +25,6 @@ public class WalnutManager extends DescribedSprite
 	private double spawnTimer;
 	private ScoreMeter scoreMeter;
 	private FrustrationMeter frustrationMeter;
-	private WalnutSimApp app;
 	
 	// current num of walnuts being rendered
 	private int currentWalnuts;
@@ -70,7 +66,7 @@ public class WalnutManager extends DescribedSprite
 	private boolean stageClear;
 	
 	//Number of walnuts we can miss in a level
-	private final int maxCanMiss = 3;
+	private final int maxCanMiss = 20;
 	
 	//Number of walnuts to collect to win the level
 	private final int walnutsToWin = 9999;
@@ -78,10 +74,10 @@ public class WalnutManager extends DescribedSprite
 	
 	public WalnutManager()
 	{
-		this(0, 0, null, null);
+		this(0, 0, null);
 	}
 	
-	public WalnutManager(int width, int height, ContentFactory contentFactory, WalnutSimApp app)
+	public WalnutManager(int width, int height, ContentFactory contentFactory)
 	{		
 		walnutImage = contentFactory.createContent("walnut.png", 4);
 		walnuts = new ArrayList<Walnut>();
@@ -110,8 +106,6 @@ public class WalnutManager extends DescribedSprite
 		
 		spawnTimer = spawnTime;
 		this.height = height;
-		
-		this.app = app;
 	}
 	
 	public void add(int x, int y, double growTime, double walnutSpeed)
@@ -165,7 +159,6 @@ public class WalnutManager extends DescribedSprite
 		{
 			if(walnutsMissed >= maxCanMiss)
 			{				
-				app.stageClear();
 				reset();
 			}
 			else
