@@ -13,7 +13,7 @@ public class FrustrationMeter extends RuleBasedSprite
     // Attributes measured in pixels
     private double                height, left, top, width;
 
-    // Attributes measured in dollars
+    // Attributes measured in frustration points
     private double                maxFrustration, currentFrustration;
     
     // Other Attributes
@@ -45,10 +45,9 @@ public class FrustrationMeter extends RuleBasedSprite
     
     
     /**
-     * Set the maximum of this PriceBar (i.e., the maximum price
-     * this PriceBar can display)
+     * Set the maximum of this FrustrationMeter 
      * 
-     * @param maxInDollars   The maximum price (in dollars)
+     * @param maxFrustration   The maximum frustration
      */
     public void setMaximum(double maxFrustration)
     {
@@ -74,9 +73,9 @@ public class FrustrationMeter extends RuleBasedSprite
     }
     
     /**
-     * Set the current price to display
+     * Set the current frustration to display
      *
-     * @param priceInDollars   The current price (in dollars)
+     * @param currentFrustration
      */
     public void currentFrustration(double currentFrustration)
     {
@@ -126,7 +125,5 @@ public class FrustrationMeter extends RuleBasedSprite
 	@Override
 	public void handleTick(int arg0) 
 	{
-		
 	}
-
 }
