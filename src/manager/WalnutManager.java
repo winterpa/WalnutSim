@@ -13,36 +13,55 @@ import visual.statik.TransformableContent;
 import visual.statik.sampled.ContentFactory;
 import content.*;
 
-public class WalnutManager extends DescribedSprite
-						   implements MouseListener
+public class WalnutManager extends DescribedSprite implements MouseListener
 {
-    private static Random rng = new Random();
+	//The random number generator to spawn the walnuts
+    	private static Random rng = new Random();
+    	
+    	//The list to hold the walnuts to spawn/are spawned in, The list of walnuts to remove
 	private ArrayList<Walnut> walnuts, nutsToRemove;
+	
+	//The image of the walnuts to render with
 	private TransformableContent walnutImage;
+	
+	//The state of the walnut manager is running or not
 	private Boolean running;
-	private int height, spawnX, spawnY;
+	
+	//The height of the app
+	private int height
+	
+	//The spawn positions of the walnuts
+	private int spawnX, spawnY;
+	
+	//The details of the current level
 	private double[] currentLevel;
+	
+	//The delay in between spawning walnuts
 	private double spawnTimer;
+	
+	//The score meter of the app
 	private ScoreMeter scoreMeter;
+	
+	//The frustration meter of the app
 	private FrustrationMeter frustrationMeter;
 	
-	// current num of walnuts being rendered
+	// Current number of walnuts being rendered
 	private int currentWalnuts;
 	
-	// max num of walnuts on-screen
+	// Max number of walnuts on-screen
 	private int maxWalnuts;
 	
-	// num of walnuts spawned
+	// Number of walnuts spawned
 	private int walnutsSpawned;
 	
-	// num of walnuts removed (clicked or falls below screen)
+	// Number of walnuts removed (clicked or falls below screen)
 	private int walnutsRemoved;
 	
-	// num of walnuts collected (clicked)
+	// Number of walnuts collected (clicked)
 	/* to be used by score */
 	private int walnutsCollected;
 	
-	// num of walnuts missed (falls below screen)
+	// Number of walnuts missed (falls below screen)
 	/* to be used by frustration */
 	private int walnutsMissed;
 	
@@ -62,21 +81,30 @@ public class WalnutManager extends DescribedSprite
 	private int totalWalnuts;
 	private double spawnTime, growTime, walnutSpeed;
 	
-	//Records if we have cleared the stage when we go to a transition page
+	//Records if the stage is cleared of all walnuts
 	private boolean stageClear;
 	
-	//Number of walnuts we can miss in a level
+	//Number of walnuts that can be missed in a level
 	private final int maxCanMiss = 20;
 	
 	//Number of walnuts to collect to win the level
 	private final int walnutsToWin = 9999;
 	
-	
+	/**
+	* Default Constructor
+	*/
 	public WalnutManager()
 	{
 		this(0, 0, null);
 	}
 	
+	/**
+	* Explicit Value Constructor
+	*
+	* @param contentFactory The ContentFactory used to create each walnut object
+	* @param width The width of the app (in pixels)
+	* @param height The height of the app (in pixels)
+	*/
 	public WalnutManager(int width, int height, ContentFactory contentFactory)
 	{		
 		walnutImage = contentFactory.createContent("walnut.png", 4);
@@ -108,12 +136,27 @@ public class WalnutManager extends DescribedSprite
 		this.height = height;
 	}
 	
+	/**
+	* Adds a walnut to the manager
+	*
+	* @param x The x-value to start the walnut at
+	* @param y The y-value to start the walnut at
+	* @param growTime The time it takes for the walnuts to grow
+	* @param walnutSpeed The speed at which the walnuts fall
+	*/
 	public void add(int x, int y, double growTime, double walnutSpeed)
 	{
 		walnuts.add(new Walnut(walnutImage, x, y, growTime, walnutSpeed));
 	}
 	
-	//add Mode for flat rate, additive rate, multiplicative rate
+	/**
+	* Changes the level the game is on
+	*
+	* @param spawnTime The delay between each walnuts spawn time
+	* @param growTime The time it takes for the walnuts to grow
+	* @param totalWalnuts The total number of walnuts to spawn for that level
+	* @param walnutSpeed The speed at which the walnuts fall
+	*/
 	public void changeLevel(double spawnTime, double growTime, int totalWalnuts, double walnutSpeed)
 	{
 		this.spawnTime = spawnTime * 60;
@@ -127,6 +170,10 @@ public class WalnutManager extends DescribedSprite
 			frustrationMeter.resetFrustration();
 		}
 	}
+	
+	/**
+	* Clears all the walnuts from the manager
+	*/
 	public void clearWalnuts()
 	{
 		Iterator<Walnut> i;
@@ -143,15 +190,31 @@ public class WalnutManager extends DescribedSprite
 		removeNuts();
 	}
 	
+	/**
+	* Returns true is the manager is currently spawning walnuts or not
+	* 
+	* @return The running state of the walnut manager
+	*/
 	public boolean isRunning()
 	{
 		return running;
 	}
 	
+	/**
+	* Returns true if there are no walnuts being rendered
+	* 
+	* @return The state of the stage
+	*/
 	public boolean isStageClear()
 	{
 		return stageClear;
 	}
+	
+	/**
+	* Handles the next "tick" of the game
+	* 
+	* @param arg0
+	*/
 	@Override
 	public void handleTick(int arg0)
 	{		
@@ -182,6 +245,9 @@ public class WalnutManager extends DescribedSprite
 		}
 	}
 	
+	/**
+	* Resets all of the walnuts managers values
+	*/
 	public void reset()
 	{
 		frustrationMeter.resetFrustration();
@@ -190,6 +256,11 @@ public class WalnutManager extends DescribedSprite
 		this.stop();
 	}
 	
+	/**
+	* Renders each walnut inside of the walnut manager
+	* 
+	* @param g The graphics engine to render with
+	*/
 	@Override
 	public void render(Graphics g)
 	{
@@ -220,12 +291,20 @@ public class WalnutManager extends DescribedSprite
 		removeNuts();
 	}
 
+	/**
+	* Removes the walnut from the walnut manager
+	* 
+	* @param walnut The walnut to remove
+	*/
 	public void remove(Walnut walnut)
 	{
 		walnuts.remove(walnut);
 		currentWalnuts--;
 	}
 
+	/**
+	* Removes the walnuts that are meant to be removed
+	*/
 	public void removeNuts()
 	{
 		Iterator<Walnut> i;
@@ -238,6 +317,9 @@ public class WalnutManager extends DescribedSprite
 		}
 	}
 	
+	/**
+	* Called by reset() to reset some of the values 
+	*/
 	public void resetValues()
 	{
 		currentWalnuts = 0;
@@ -248,34 +330,59 @@ public class WalnutManager extends DescribedSprite
 		spawnTimer = spawnTime;
 	}
 	
+	/**
+	* Sets the score meter so the manager can alter the score
+	* 
+	* @param scoreMeter The score meter of the app
+	*/
 	public void setScoreMeter(ScoreMeter scoreMeter)
 	{
 		this.scoreMeter = scoreMeter;
 	}
 	
+	/**
+	* Sets the frustration meter so the manager can alter the frustration
+	* 
+	* @param frustrationMeter The frustration meter of the app
+	*/
 	public void setFrustrationMeter(FrustrationMeter frustrationMeter)
 	{
 		this.frustrationMeter = frustrationMeter;
 	}
 
-	
+	/**
+	* Start running the walnut manager
+	*/
 	public void start()
 	{
 		running = true;
 	}
 	
+	/**
+	* Stop running the walnut manager
+	*/
 	public void stop()
 	{
 		running = false;
 	}
 	
+	/**
+	* Set the spawn time of the level
+	*/
 	public void setSpawnTime(int spawnTime)
 	{
 		this.spawnTime = spawnTime;
 	}
+	
 	public void mouseClicked(MouseEvent event) {}
 	public void mouseEntered(MouseEvent event) {}
 	public void mouseExited(MouseEvent event) {}
+	
+	/**
+	* Handles the event that occurs when a mouse is clicked
+	* 
+	* @param event The mouse event to parse
+	*/
 	public void mousePressed(MouseEvent event) 
 	{
 		mouseX = event.getX();
