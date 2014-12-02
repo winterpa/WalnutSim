@@ -145,77 +145,39 @@ implements ActionListener, MetronomeListener
 		}
 		else if(actionCommand.equals(LEVEL_ONE))
 		{
-			levelId = 1;
-			startLevel(levelId);
+			contentPane.removeAll();
+			contentPane.repaint();
+			
+			walnutManager.changeLevel(1.5, 1.5, 9999, 2);
+			walnutManager.reset();
+			walnutManager.start();
+			
+			contentPane.add(stageView);
 		}
 		else if(actionCommand.equals(LEVEL_TWO))
 		{
-			levelId = 2;
-			startLevel(levelId);
+			contentPane.removeAll();
+			contentPane.repaint();
+			
+			walnutManager.changeLevel(0.75, 1.25, 9999, 5.5);
+			walnutManager.reset();
+			walnutManager.start();
+			
+			contentPane.add(stageView);
 		}
 		else if(actionCommand.equals(LEVEL_THREE))
 		{
-			levelId = 3;
-			startLevel(levelId);
-		}
-		else if(actionCommand.equals(NEXT))
-		{
-		    contentPane.removeAll();
-		    contentPane.repaint();
-		    levelId = levels.getLevelId();
-		    if(levelId < numberOfLevels)
-		    {
-		    	walnutManager.nextLevel(levels.changeLevel(levelId));
-		    }
-		    else
-		    {
-		    	createMainMenu();
-		    }
-			//Change level to the next if able (last level should return to main page
-		    //and start the next level
-		}
-	}
-	
-	/*
-	 * Check if WalnutManager has finished the level
-	 *  - Add 'bool levelFinished' variable to WalnutManager?
-	 *  
-	 *  If the level is finished, display the stats in a 'level complete' screen
-	 *   - Add 'getLevelStats' function that returns walnutsCollected, walnutsMissed
-	 *  
-	 *  Add buttons to replay level, go to next level, or go back to main menu
-	 *   - Replay level: clear buttons, and start() the walnutManager
-	 *   - Next level: changeLevel(), clear buttons, and start() the walnutManager
-	 *   - Main Menu: clear buttons, create Main Menu buttons
-	 */		
-	
-	/*
-	 * How to handle pause menu
-	 *  - don't call walnut's handleTick function in walnutManager's handleTick
-	 */
-	
-	public void handleTick(int millis)
-	{
-		levelRunning = walnutManager.isRunning();
-		System.out.println(levelRunning);
-		if(!levelRunning)
-		{
-			System.out.println("Here");
-			if(walnutManager.isStageClear())
-			{
-				createNextButton();
-			}
-			else
-			{
-				createBackButton();
-			}
+			contentPane.removeAll();
+			contentPane.repaint();
 			
-			transitionPage = new TransitionPage(walnutManager, levels, levelId, 0 ,walnutManager.isStageClear());
-			stage.add(transitionPage);
+			walnutManager.changeLevel(0.50, 1, 9999, 7.5);
+			walnutManager.reset();
+			walnutManager.start();
+			
 			contentPane.add(stageView);
 		}
 	}
-	
+
 	public void init()
 	{
 		height = 700;
@@ -240,28 +202,16 @@ implements ActionListener, MetronomeListener
 		
 		walnutManager = new WalnutManager(width, height, contentFactory);
 		
-		//walnutManager.changeLevel(5, 1, 9999, 2);
-		
-		//I want to start the internalClock metronome but there are thread issues
-		//This line of code can be removed and the game will function 
-		//No transition pages are yet being displayed.
-		SwingUtilities.invokeLater(internalClock.start());
-		//^problem code above
+		walnutManager.changeLevel(5, 1, 9999, 2);
 		
 		walnutManager.start();
 		stage.add(walnutManager);
 	    stage.addMouseListener(walnutManager);
-	    
-	    //stage.add(transitionPage);
-	    
-	    levels = walnutManager.getLevelManager();
 		
 		createMainMenu();
 
 		contentPane.add(stageView);
-//level adding
-//
-//
+		
 		stage.start();
 	}
 	
@@ -279,7 +229,7 @@ implements ActionListener, MetronomeListener
 		  } catch (IOException ex) {
 		  } catch (IllegalArgumentException ex) {}
 		contentPane.add(logo);
-		
+		/*
 		start = new JButton(START);
 		start.setBounds(150, 300, 225, 50);
 		start.addActionListener(this);
@@ -292,7 +242,7 @@ implements ActionListener, MetronomeListener
 		  } catch (IOException ex) {
 		  } catch (IllegalArgumentException ex) {}
 		contentPane.add(start);
-	
+		*/
         select = new JButton(SELECT);
 		select.setBounds(130, 380, 250, 50);
 		select.addActionListener(this);
@@ -305,7 +255,7 @@ implements ActionListener, MetronomeListener
 		  } catch (IOException ex) {
 		  } catch (IllegalArgumentException ex) {}
 		contentPane.add(select);
-		
+		/*
 		options = new JButton(OPTIONS);
 		options.setBounds(90, 460, 325, 50);
 		options.addActionListener(this);
@@ -318,7 +268,7 @@ implements ActionListener, MetronomeListener
 		  } catch (IOException ex) {
 		  } catch (IllegalArgumentException ex) {}
 		contentPane.add(options);
-		
+		*/
 		exit = new JButton(EXIT);
 		exit.setBounds(170, 580, 175, 50);
 		exit.addActionListener(this);
@@ -394,5 +344,11 @@ implements ActionListener, MetronomeListener
 		walnutManager.clearWalnuts();
 		walnutManager.resetValues();
 		walnutManager.start();
+	}
+
+	@Override
+	public void handleTick(int arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }

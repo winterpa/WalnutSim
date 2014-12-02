@@ -77,7 +77,7 @@ public class WalnutManager extends DescribedSprite
 	private final int maxCanMiss = 10;
 	
 	//Number of walnuts to collect to win the level
-	private final int walnutsToWin = 5;
+	private final int walnutsToWin = 9999;
 	
 	
 	public WalnutManager()
@@ -86,12 +86,7 @@ public class WalnutManager extends DescribedSprite
 	}
 	
 	public WalnutManager(int width, int height, ContentFactory contentFactory)
-	{
-		levels = new LevelManager();
-		levels.addLevel(1, 0.75, 1, 10, 1.5);
-		levels.addLevel(2, 0.35, 1.5, 50, 1);
-		levels.addLevel(3, 0.25, 2, 90000, 5);
-		
+	{		
 		walnutImage = contentFactory.createContent("walnut.png", 4);
 		walnuts = new ArrayList<Walnut>();
 		nutsToRemove = new ArrayList<Walnut>();
@@ -113,12 +108,9 @@ public class WalnutManager extends DescribedSprite
 		growTime = 1;
 		totalWalnuts = 10;
 		walnutSpeed = 3;
-		maxWalnuts = 10;
-		id = levels.getLevelId();
 		maxWalnuts = 30;
 		
 		stageClear = false;
-
 		
 		spawnTimer = spawnTime;
 		this.height = height;
@@ -130,7 +122,7 @@ public class WalnutManager extends DescribedSprite
 		walnuts.add(new Walnut(walnutImage, x, y, growTime, walnutSpeed, id));
 	}
 	
-	/*//add Mode for flat rate, additive rate, multiplicative rate
+	//add Mode for flat rate, additive rate, multiplicative rate
 	public void changeLevel(double spawnTime, double growTime, int totalWalnuts, double walnutSpeed)
 	{
 		this.spawnTime = spawnTime * 60;
@@ -138,7 +130,6 @@ public class WalnutManager extends DescribedSprite
 		this.totalWalnuts = totalWalnuts;
 		this.walnutSpeed = walnutSpeed;
 	}
-	*/
 	public void clearWalnuts()
 	{
 		Iterator<Walnut> i;
@@ -214,20 +205,11 @@ public class WalnutManager extends DescribedSprite
 	
 	public void reset()
 	{
+		this.clearWalnuts();
 		this.resetValues();
 		this.stop();
 	}
 	
-	public void nextLevel(double[] level)
-	{
-		currentLevel = level;
-		this.spawnTime = currentLevel[0];
-		this.growTime = currentLevel[1];
-		this.totalWalnuts = (int)currentLevel[2];
-	    this.walnutSpeed = currentLevel[3];
-	    this.id = (int)currentLevel[4];
-	    start();
-	}
 	@Override
 	public void render(Graphics g)
 	{
@@ -282,6 +264,7 @@ public class WalnutManager extends DescribedSprite
 		walnutsRemoved = 0;
 		walnutsCollected = 0;
 		walnutsMissed = 0;
+		spawnTimer = spawnTime;
 	}
 	
 	public void start()
@@ -298,23 +281,6 @@ public class WalnutManager extends DescribedSprite
 	{
 		this.spawnTime = spawnTime;
 	}
-	
-	public void transition()
-	{
-		TransitionPage transitionPage;
-		transitionPage = new TransitionPage(this, levels, id, 0, true);
-		
-	}
-	
-	public LevelManager getLevelManager()
-	{
-		return levels;
-	}
-	public void gameOver()
-	{
-		
-	}
-	
 	public void mouseClicked(MouseEvent event) {}
 	public void mouseEntered(MouseEvent event) {}
 	public void mouseExited(MouseEvent event) {}
