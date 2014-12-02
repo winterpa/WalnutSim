@@ -7,12 +7,23 @@ import visual.statik.TransformableContent;
 
 public class Walnut extends RuleBasedSprite
 {
-	private int	                      x, y;      
-    private boolean					  toDelete;
+    //The x and y position of the upper left corner of the walnut
+    private int	                				 x, y;
+    
+    //The state of whether or not this walnut should be removed from the manager
+    private boolean					     toDelete;
+    
+    //The current "tick" the walnut is on
     private double					  currentTime;
-    private double					  growTime;
+    
+    //How long it takes the walnut to grow
+    private double					     growTime;
+    
+    //How fast the walnut will fall from the tree
     private double					  walnutSpeed;
-    private Rectangle2D				  bounds;
+    
+    //The boundaries of the walnut image
+    private Rectangle2D				  	       bounds;
     
     //debugging
     private int id;
@@ -30,14 +41,13 @@ public class Walnut extends RuleBasedSprite
     /**
      * Explicit Value Constructor
      *
-     * @param content   The static visual content
-     * @param width     The width of the Stage
-     * @param height    The height of the Stage
+     * @param content     The static visual content
+     * @param width       The width of the Stage
+     * @param height      The height of the Stage
+     * @param growTime    The time it takes for the walnut to grow
+     * @param walnutSpeed The speed the walnut falls down off the tree
      */
-    public Walnut(TransformableContent content,
-
-                          int x, int y, double growTime, double walnutSpeed)
-
+    public Walnut(TransformableContent content, int x, int y, double growTime, double walnutSpeed)
     {
        super(content);
        this.toDelete   = false;
@@ -59,12 +69,23 @@ public class Walnut extends RuleBasedSprite
 	   //this.bounds.setRect(x,y,55,55);
        setVisible(true);
     }
-    
+    	
+    	/**
+     	* Checks to see if the mouse intersects the walnut
+     	*
+     	* @param mX 	The x bound of the walnut
+     	* @param mY	The y bound of the walnut
+     	*/
 	public boolean contains(int mX, int mY)
 	{
 		return bounds.contains(mX, mY);
 	}
 
+	/**
+     	* Handles the event when the next tick occurs
+     	*
+     	* @param time	The current "tick" in the time
+     	*/
 	@Override
 	public void handleTick(int time) 
 	{
@@ -91,6 +112,14 @@ public class Walnut extends RuleBasedSprite
 			toDelete = true;
 	}
 	
+	/**
+     	* Returns true if the mouse is in bounds
+     	*
+     	* @param mX 	X-Value of the Mouse
+     	* @param mY	Y-Value of the Mouse
+     	* 
+     	* @return inBounds
+     	*/
 	public boolean inBounds(int mouseX, int mouseY)
 	{
 		boolean inBounds;
@@ -105,26 +134,54 @@ public class Walnut extends RuleBasedSprite
 		
 		return inBounds;
 	}
+	
+	/**
+     	* Returns true if the mouse is in bounds
+     	*
+     	* @param mX 	X-Value of the Mouse
+     	* @param mY	Y-Value of the Mouse
+     	* 
+     	* @return The Rectangle2D surronding the image
+     	*/
 	public Rectangle2D getBounds2D()
 	{
 		return bounds;
 	}
 	
+	/**
+     	* Returns the y-value of the walnut
+     	* 
+     	* @return The y-value of the upper-left corner of the walnut
+     	*/
 	public double getY()
 	{
 		return y;
 	}
 	
+	/**
+     	* Returns the x-value of the walnut
+     	* 
+     	* @return The x-value of the upper-left corner of the walnut
+     	*/
 	public double getX()
 	{
 		return x;
 	}
 	
+	/**
+     	* Prints toString() to the Console
+     	* 
+     	*/
 	public void print()
 	{
 		System.out.println( this.toString() );
 	}
 	
+	/**
+     	* Returns the current state of the walnut if it's to be deleted
+     	* 
+     	* @return State of walnut's deletion
+     	*/
 	public boolean toDelete()
 	{
 		return toDelete;
