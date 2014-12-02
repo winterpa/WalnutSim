@@ -1,4 +1,5 @@
 import app.*;
+import sim.*;
 
 
 public class WalnutSimApplet extends MultimediaApplet {

@@ -36,7 +36,7 @@ public class Walnut extends RuleBasedSprite
      */
     public Walnut(TransformableContent content,
 
-                          int x, int y, double growTime, double walnutSpeed, int id)
+                          int x, int y, double growTime, double walnutSpeed)
 
     {
        super(content);
@@ -58,19 +58,12 @@ public class Walnut extends RuleBasedSprite
        setScale(.1);
 	   //this.bounds.setRect(x,y,55,55);
        setVisible(true);
-       
-       this.id = id;
     }
     
 	public boolean contains(int mX, int mY)
 	{
 		return bounds.contains(mX, mY);
 	}
-    
-    public int getID()
-    {
-    	return id;
-    }
 
 	@Override
 	public void handleTick(int time) 

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
+import sim.WalnutSimApp;
 import visual.dynamic.described.DescribedSprite;
 import visual.statik.TransformableContent;
 import visual.statik.sampled.ContentFactory;
@@ -27,6 +28,7 @@ public class WalnutManager extends DescribedSprite
 	private double spawnTimer;
 	private ScoreMeter scoreMeter;
 	private FrustrationMeter frustrationMeter;
+	private WalnutSimApp app;
 	
 	// current num of walnuts being rendered
 	private int currentWalnuts;
@@ -64,13 +66,6 @@ public class WalnutManager extends DescribedSprite
 	private int totalWalnuts;
 	private double spawnTime, growTime, walnutSpeed;
 	
-	private int id;
-	
-	private LevelManager levels;
-	
-	//debugging
-	private int currentWalnut = 0;
-	
 	//Records if we have cleared the stage when we go to a transition page
 	private boolean stageClear;
 	
@@ -83,10 +78,10 @@ public class WalnutManager extends DescribedSprite
 	
 	public WalnutManager()
 	{
-		this(0, 0, null);
+		this(0, 0, null, null);
 	}
 	
-	public WalnutManager(int width, int height, ContentFactory contentFactory)
+	public WalnutManager(int width, int height, ContentFactory contentFactory, WalnutSimApp app)
 	{		
 		walnutImage = contentFactory.createContent("walnut.png", 4);
 		walnuts = new ArrayList<Walnut>();
@@ -116,11 +111,12 @@ public class WalnutManager extends DescribedSprite
 		spawnTimer = spawnTime;
 		this.height = height;
 		
+		this.app = app;
 	}
 	
-	public void add(int x, int y, double growTime, double walnutSpeed, int id)
+	public void add(int x, int y, double growTime, double walnutSpeed)
 	{
-		walnuts.add(new Walnut(walnutImage, x, y, growTime, walnutSpeed, id));
+		walnuts.add(new Walnut(walnutImage, x, y, growTime, walnutSpeed));
 	}
 	
 	//add Mode for flat rate, additive rate, multiplicative rate
@@ -134,6 +130,7 @@ public class WalnutManager extends DescribedSprite
 		if(frustrationMeter != null)
 		{
 			frustrationMeter.setMaximum(maxCanMiss);
+			frustrationMeter.resetFrustration();
 		}
 	}
 	public void clearWalnuts()
@@ -168,6 +165,7 @@ public class WalnutManager extends DescribedSprite
 		{
 			if(walnutsMissed >= maxCanMiss)
 			{				
+				app.stageClear();
 				reset();
 			}
 			else
@@ -176,12 +174,9 @@ public class WalnutManager extends DescribedSprite
 				{
 					if(currentWalnuts < maxWalnuts)
 					{
-						this.add(rng.nextInt(spawnX) + 10, rng.nextInt(spawnY), growTime, walnutSpeed, currentWalnut);
+						this.add(rng.nextInt(spawnX) + 10, rng.nextInt(spawnY), growTime, walnutSpeed);
 						currentWalnuts++;
 						walnutsSpawned++;
-						
-						//debugging
-						currentWalnut++;
 					}
 					
 					spawnTimer = spawnTime;
@@ -196,6 +191,7 @@ public class WalnutManager extends DescribedSprite
 	
 	public void reset()
 	{
+		frustrationMeter.resetFrustration();
 		this.clearWalnuts();
 		this.resetValues();
 		this.stop();
