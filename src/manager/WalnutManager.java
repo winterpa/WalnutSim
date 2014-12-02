@@ -11,8 +11,7 @@ import java.util.Random;
 import visual.dynamic.described.DescribedSprite;
 import visual.statik.TransformableContent;
 import visual.statik.sampled.ContentFactory;
-import content.Walnut;
-import content.TransitionPage;
+import content.*;
 
 import manager.LevelManager;
 
@@ -26,6 +25,8 @@ public class WalnutManager extends DescribedSprite
 	private int height, spawnX, spawnY;
 	private double[] currentLevel;
 	private double spawnTimer;
+	private ScoreMeter scoreMeter;
+	private FrustrationMeter frustrationMeter;
 	
 	// current num of walnuts being rendered
 	private int currentWalnuts;
@@ -74,7 +75,7 @@ public class WalnutManager extends DescribedSprite
 	private boolean stageClear;
 	
 	//Number of walnuts we can miss in a level
-	private final int maxCanMiss = 10;
+	private final int maxCanMiss = 3;
 	
 	//Number of walnuts to collect to win the level
 	private final int walnutsToWin = 9999;
@@ -129,6 +130,11 @@ public class WalnutManager extends DescribedSprite
 		this.growTime = growTime;
 		this.totalWalnuts = totalWalnuts;
 		this.walnutSpeed = walnutSpeed;
+		
+		if(frustrationMeter != null)
+		{
+			frustrationMeter.setMaximum(maxCanMiss);
+		}
 	}
 	public void clearWalnuts()
 	{
@@ -160,24 +166,9 @@ public class WalnutManager extends DescribedSprite
 	{		
 		if(running)
 		{
-			//System.out.println("Walnuts Missed: " + walnutsMissed);
-			//System.out.println("Walnuts Collected: " + walnutsCollected);
-			if(walnutsRemoved >= totalWalnuts || walnutsCollected >= walnutsToWin || walnutsMissed == maxCanMiss)
+			if(walnutsMissed >= maxCanMiss)
 			{				
-				this.clearWalnuts();
-				
-				if(walnutsCollected == walnutsToWin)
-				{
-					stageClear = true;
-					System.out.println("Stage clear is " + stageClear);
-					reset();
-				}
-				else if(walnutsMissed == maxCanMiss)
-				{
-					stageClear = false;
-					System.out.println("Stage clear is " + stageClear);
-					reset();
-				}
+				reset();
 			}
 			else
 			{
@@ -231,6 +222,7 @@ public class WalnutManager extends DescribedSprite
 				nutsToRemove.add(tempNut);
 				walnutsMissed++;
 				walnutsRemoved++;
+				frustrationMeter.incrementFrustration();
 			}
 			else
 				tempNut.render(g2);
@@ -267,6 +259,17 @@ public class WalnutManager extends DescribedSprite
 		spawnTimer = spawnTime;
 	}
 	
+	public void setScoreMeter(ScoreMeter scoreMeter)
+	{
+		this.scoreMeter = scoreMeter;
+	}
+	
+	public void setFrustrationMeter(FrustrationMeter frustrationMeter)
+	{
+		this.frustrationMeter = frustrationMeter;
+	}
+
+	
 	public void start()
 	{
 		running = true;
@@ -301,6 +304,7 @@ public class WalnutManager extends DescribedSprite
 				nutsToRemove.add(tempNut);
 				walnutsCollected++;
 				walnutsRemoved++;
+				scoreMeter.incrementScore();
 			}
 		}
 		removeNuts();

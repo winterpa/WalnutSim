@@ -37,12 +37,12 @@ public class FrustrationMeter extends RuleBasedSprite
        this.width  = width;
        this.height = height;
        
-       maxFrustration = 250;
+       maxFrustration = 20;
 
        frustrationColor = Color.RED;          
     }
 
-
+    
     
     /**
      * Set the maximum of this PriceBar (i.e., the maximum price
@@ -126,7 +126,7 @@ public class FrustrationMeter extends RuleBasedSprite
 	@Override
 	public void handleTick(int arg0) 
 	{
-		incrementFrustration();
+		
 	}
 
 }

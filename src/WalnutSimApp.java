@@ -21,6 +21,7 @@ import visual.statik.sampled.Content;
 import visual.statik.sampled.ContentFactory;
 import app.*;
 import event.*;
+import content.*;
 
 public class WalnutSimApp extends AbstractMultimediaApp
 implements ActionListener, MetronomeListener
@@ -39,8 +40,8 @@ implements ActionListener, MetronomeListener
 	private static final String LEVEL_TWO = "Level 2";
 	private static final String LEVEL_THREE = "Level 3";
 	
-	private static final int FRUSTRATION_METER_WIDTH = 40;
-	private static final int FRUSTRATION_METER_HEIGHT = 100;
+	private static final int FRUSTRATION_METER_WIDTH = 200;
+	private static final int FRUSTRATION_METER_HEIGHT = 50;
 	
 	private boolean				hasSound, hasMusic;
 	int                 		height, width;	
@@ -48,21 +49,13 @@ implements ActionListener, MetronomeListener
 	JButton						level_one, level_two, level_three;
 	JPanel		        		contentPane, selectScreen, optionsScreen;
 	private Content     		background, imgStart, imgSelect, imgOptions, imgExit;
-	private ResourceFinder  	finder;
 	private ContentFactory  	contentFactory;
+	private FrustrationMeter	frustrationMeter;
+	private ResourceFinder  	finder;
+	private ScoreMeter			scoreMeter;
 	private Stage  				stage;
 	private VisualizationView 	stageView;
 	private WalnutManager		walnutManager;
-	
-	private double[]            level;
-	private int                 levelId;
-	private LevelManager        levels;
-	
-	private boolean             levelRunning;
-	
-	private TransitionPage      transitionPage;
-	private final int           numberOfLevels = 3;
-	private Metronome           internalClock;
 	
 	public void actionPerformed(ActionEvent event)
 	{
@@ -70,12 +63,7 @@ implements ActionListener, MetronomeListener
 		
 		actionCommand = event.getActionCommand();
 		if(actionCommand.equals(START))
-		{
-			//Start 1st level
-			levelId = 1;
-			startLevel(levelId);
-			
-			
+		{			
 		}
 		else if(actionCommand.equals(SELECT))
 		{
@@ -151,7 +139,9 @@ implements ActionListener, MetronomeListener
 			walnutManager.changeLevel(1.5, 1.5, 9999, 2);
 			walnutManager.reset();
 			walnutManager.start();
-			
+
+			stage.add(scoreMeter);
+			stage.add(frustrationMeter);
 			contentPane.add(stageView);
 		}
 		else if(actionCommand.equals(LEVEL_TWO))
@@ -162,7 +152,9 @@ implements ActionListener, MetronomeListener
 			walnutManager.changeLevel(0.75, 1.25, 9999, 5.5);
 			walnutManager.reset();
 			walnutManager.start();
-			
+
+			stage.add(scoreMeter);
+			stage.add(frustrationMeter);
 			contentPane.add(stageView);
 		}
 		else if(actionCommand.equals(LEVEL_THREE))
@@ -173,7 +165,9 @@ implements ActionListener, MetronomeListener
 			walnutManager.changeLevel(0.50, 1, 9999, 7.5);
 			walnutManager.reset();
 			walnutManager.start();
-			
+
+			stage.add(scoreMeter);
+			stage.add(frustrationMeter);
 			contentPane.add(stageView);
 		}
 	}
@@ -200,11 +194,16 @@ implements ActionListener, MetronomeListener
 		background = contentFactory.createContent("background.png", 3);
 		stage.add(background);
 		
+		scoreMeter = new ScoreMeter(48);
+		frustrationMeter = new FrustrationMeter(width-FRUSTRATION_METER_WIDTH, 0, FRUSTRATION_METER_WIDTH, FRUSTRATION_METER_HEIGHT);
+
 		walnutManager = new WalnutManager(width, height, contentFactory);
 		
 		walnutManager.changeLevel(5, 1, 9999, 2);
-		
+		walnutManager.setFrustrationMeter(frustrationMeter);
+		walnutManager.setScoreMeter(scoreMeter);
 		walnutManager.start();
+		
 		stage.add(walnutManager);
 	    stage.addMouseListener(walnutManager);
 		
@@ -229,20 +228,7 @@ implements ActionListener, MetronomeListener
 		  } catch (IOException ex) {
 		  } catch (IllegalArgumentException ex) {}
 		contentPane.add(logo);
-		/*
-		start = new JButton(START);
-		start.setBounds(150, 300, 225, 50);
-		start.addActionListener(this);
-		  try {
-		    Image img = ImageIO.read(getClass().getResource("start.png"));
-		    start.setIcon(new ImageIcon(img));
-		    start.setOpaque(false);
-		    start.setContentAreaFilled(false);
-		    start.setBorderPainted(false);
-		  } catch (IOException ex) {
-		  } catch (IllegalArgumentException ex) {}
-		contentPane.add(start);
-		*/
+		
         select = new JButton(SELECT);
 		select.setBounds(130, 380, 250, 50);
 		select.addActionListener(this);
@@ -255,20 +241,7 @@ implements ActionListener, MetronomeListener
 		  } catch (IOException ex) {
 		  } catch (IllegalArgumentException ex) {}
 		contentPane.add(select);
-		/*
-		options = new JButton(OPTIONS);
-		options.setBounds(90, 460, 325, 50);
-		options.addActionListener(this);
-		  try {
-		    Image img = ImageIO.read(getClass().getResource("options.png"));
-		    options.setIcon(new ImageIcon(img));
-		    options.setOpaque(false);
-		    options.setContentAreaFilled(false);
-		    options.setBorderPainted(false);
-		  } catch (IOException ex) {
-		  } catch (IllegalArgumentException ex) {}
-		contentPane.add(options);
-		*/
+		
 		exit = new JButton(EXIT);
 		exit.setBounds(170, 580, 175, 50);
 		exit.addActionListener(this);
@@ -301,28 +274,73 @@ implements ActionListener, MetronomeListener
 	}
 	
 	public void createLevelMenu()
-	{
+	{		
+		logo = new JButton(LOGO);
+		logo.setBounds(50, 50, 425, 125);
+		logo.addActionListener(this);
+		  try {
+		    Image img = ImageIO.read(getClass().getResource("logo.png"));
+		    logo.setIcon(new ImageIcon(img));
+		    logo.setOpaque(false);
+		    logo.setContentAreaFilled(false);
+		    logo.setBorderPainted(false);
+		  } catch (IOException ex) {
+		  } catch (IllegalArgumentException ex) {}
+		contentPane.add(logo);
+		
 		level_one = new JButton(LEVEL_ONE);
-        level_one.setBounds(375, 300, 100, 50);
-        level_one.addActionListener(this);
+		level_one.setBounds(120, 250, 300, 50);
+		level_one.addActionListener(this);
+		  try {
+		    Image img = ImageIO.read(getClass().getResource("level1.png"));
+		    level_one.setIcon(new ImageIcon(img));
+		    level_one.setOpaque(false);
+		    level_one.setContentAreaFilled(false);
+		    level_one.setBorderPainted(false);
+		  } catch (IOException ex) {
+		  } catch (IllegalArgumentException ex) {}
 		contentPane.add(level_one);
 		
 		level_two = new JButton(LEVEL_TWO);
-		level_two.setBounds(375, 375, 100, 50);
+		level_two.setBounds(120, 350, 300, 50);
 		level_two.addActionListener(this);
+		  try {
+		    Image img = ImageIO.read(getClass().getResource("level2.png"));
+		    level_two.setIcon(new ImageIcon(img));
+		    level_two.setOpaque(false);
+		    level_two.setContentAreaFilled(false);
+		    level_two.setBorderPainted(false);
+		  } catch (IOException ex) {
+		  } catch (IllegalArgumentException ex) {}
 		contentPane.add(level_two);
 		
-		level_three = new JButton(LEVEL_THREE);
-		level_three.setBounds(375, 450, 100, 50);
+		level_three = new JButton(LEVEL_TWO);
+		level_three.setBounds(120, 450, 300, 50);
 		level_three.addActionListener(this);
+		  try {
+		    Image img = ImageIO.read(getClass().getResource("level3.png"));
+		    level_three.setIcon(new ImageIcon(img));
+		    level_three.setOpaque(false);
+		    level_three.setContentAreaFilled(false);
+		    level_three.setBorderPainted(false);
+		  } catch (IOException ex) {
+		  } catch (IllegalArgumentException ex) {}
 		contentPane.add(level_three);
 	}
 	
 	public void createBackButton()
-	{
+	{		
 		back = new JButton(BACK);
-		back.setBounds(375, 525, 100, 50);
+		back.setBounds(170, 580, 200, 50);
 		back.addActionListener(this);
+		  try {
+		    Image img = ImageIO.read(getClass().getResource("back.png"));
+		    back.setIcon(new ImageIcon(img));
+		    back.setOpaque(false);
+		    back.setContentAreaFilled(false);
+		    back.setBorderPainted(false);
+		  } catch (IOException ex) {
+		  } catch (IllegalArgumentException ex) {}
 		contentPane.add(back);
 	}
 	public void createNextButton()
@@ -332,23 +350,9 @@ implements ActionListener, MetronomeListener
 		next.addActionListener(this);
 		contentPane.add(next);
 	}
-	public void startLevel(int levelId)
-	{
-		contentPane.removeAll();
-		contentPane.repaint();
-		
-		levels.changeLevel(levelId);
-		
-		contentPane.add(stageView);
-		
-		walnutManager.clearWalnuts();
-		walnutManager.resetValues();
-		walnutManager.start();
-	}
-
+	
 	@Override
-	public void handleTick(int arg0) {
-		// TODO Auto-generated method stub
-		
+	public void handleTick(int arg0) 
+	{
 	}
 }
