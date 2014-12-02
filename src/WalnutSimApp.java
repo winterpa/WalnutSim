@@ -4,8 +4,9 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import content.FrustrationMeter;
+import content.ScoreMeter;
 import manager.WalnutManager;
-
 import visual.VisualizationView;
 import visual.dynamic.described.Stage;
 import visual.statik.sampled.Content;
@@ -14,7 +15,7 @@ import app.*;
 import event.*;
 
 public class WalnutSimApp extends AbstractMultimediaApp
-implements ActionListener, MetronomeListener
+implements ActionListener
 {
 	// button names
 	private static final String START = "Start";
@@ -28,8 +29,8 @@ implements ActionListener, MetronomeListener
 	private static final String LEVEL_TWO = "Level 2";
 	private static final String LEVEL_THREE = "Level 3";
 	
-	private static final int FRUSTRATION_METER_WIDTH = 40;
-	private static final int FRUSTRATION_METER_HEIGHT = 100;
+	private static final int FRUSTRATION_METER_WIDTH = 100;
+	private static final int FRUSTRATION_METER_HEIGHT = 40;
 	
 	private boolean				hasSound, hasMusic;
 	int                 		height, width;	
@@ -37,8 +38,10 @@ implements ActionListener, MetronomeListener
 	JButton						level_one, level_two, level_three;
 	JPanel		        		contentPane, selectScreen, optionsScreen;
 	private Content     		background;
+	private FrustrationMeter	frustrationMeter;
 	private ResourceFinder  	finder;
 	private ContentFactory  	contentFactory;
+	private ScoreMeter			scoreMeter;
 	private Stage  				stage;
 	private VisualizationView 	stageView;
 	private WalnutManager		walnutManager;
@@ -155,29 +158,6 @@ implements ActionListener, MetronomeListener
 		}
 	}
 	
-	/*
-	 * Check if WalnutManager has finished the level
-	 *  - Add 'bool levelFinished' variable to WalnutManager?
-	 *  
-	 *  If the level is finished, display the stats in a 'level complete' screen
-	 *   - Add 'getLevelStats' function that returns walnutsCollected, walnutsMissed
-	 *  
-	 *  Add buttons to replay level, go to next level, or go back to main menu
-	 *   - Replay level: clear buttons, and start() the walnutManager
-	 *   - Next level: changeLevel(), clear buttons, and start() the walnutManager
-	 *   - Main Menu: clear buttons, create Main Menu buttons
-	 */		
-	
-	/*
-	 * How to handle pause menu
-	 *  - don't call walnut's handleTick function in walnutManager's handleTick
-	 */
-	
-	public void handleTick(int millis)
-	{
-		return;
-	}
-	
 	public void init()
 	{
 		height = 700;
@@ -200,9 +180,17 @@ implements ActionListener, MetronomeListener
 		background = contentFactory.createContent("background.png", 3);
 		stage.add(background);
 		
+		scoreMeter = new ScoreMeter(48);
+		frustrationMeter = new FrustrationMeter(width-FRUSTRATION_METER_WIDTH, 0, FRUSTRATION_METER_WIDTH, FRUSTRATION_METER_HEIGHT);
+		
 		walnutManager = new WalnutManager(width, height, contentFactory);
+		walnutManager.setFrustrationMeter(frustrationMeter);
+		walnutManager.setScoreMeter(scoreMeter);
+		stage.add(scoreMeter);
+		stage.add(frustrationMeter);
 		stage.add(walnutManager);
 	    stage.addMouseListener(walnutManager);
+	    stage.addKeyListener(walnutManager);
 		
 		createMainMenu();
 
@@ -239,6 +227,7 @@ implements ActionListener, MetronomeListener
         music = new JButton(MUSIC + ": Off");
         music.setBounds(375, 375, 100, 50);
         music.addActionListener(this);
+        music.setActionCommand(MUSIC);
 		contentPane.add(music);
 		
         sound = new JButton(SOUND + ": Off");
