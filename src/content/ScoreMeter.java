@@ -15,8 +15,13 @@ import visual.statik.TransformableContent;
 
 public class ScoreMeter extends AbstractSprite
 {
+	//The text to render
 	private String text;
+	
+	//The score to render with the text
 	private int score;
+	
+	//The font type to render with
 	private Font font;
 	
 	/**
