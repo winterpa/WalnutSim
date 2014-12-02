@@ -26,7 +26,7 @@ import content.*;
 public class WalnutSimApp extends AbstractMultimediaApp
 implements ActionListener, MetronomeListener
 {
-	// button names
+	// Button names
 	private static final String START = "Start";
 	private static final String SELECT = "Select Stage";
 	private static final String OPTIONS = "Options";
@@ -40,6 +40,7 @@ implements ActionListener, MetronomeListener
 	private static final String LEVEL_TWO = "Level 2";
 	private static final String LEVEL_THREE = "Level 3";
 	
+	//Frustration Meter Constants
 	private static final int FRUSTRATION_METER_WIDTH = 200;
 	private static final int FRUSTRATION_METER_HEIGHT = 50;
 	
@@ -57,6 +58,11 @@ implements ActionListener, MetronomeListener
 	private VisualizationView 	stageView;
 	private WalnutManager		walnutManager;
 	
+	/**
+	* The button click handler
+	*
+	* @param event The event to parse
+	*/
 	public void actionPerformed(ActionEvent event)
 	{
 		String actionCommand;
@@ -172,12 +178,15 @@ implements ActionListener, MetronomeListener
 		}
 	}
 
+	/**
+	* Creates the app
+	*/
 	public void init()
 	{
 		height = 700;
-        width  = 500;
-        hasMusic = false;
-        hasSound = false;
+        	width  = 500;
+        	hasMusic = false;
+        	hasSound = false;
      
 		contentPane = (JPanel)rootPaneContainer.getContentPane();
 		contentPane.setLayout(null);
@@ -205,7 +214,7 @@ implements ActionListener, MetronomeListener
 		walnutManager.start();
 		
 		stage.add(walnutManager);
-	    stage.addMouseListener(walnutManager);
+	    	stage.addMouseListener(walnutManager);
 		
 		createMainMenu();
 
@@ -214,6 +223,9 @@ implements ActionListener, MetronomeListener
 		stage.start();
 	}
 	
+	/**
+	* Creates the main menu
+	*/
 	public void createMainMenu()
 	{
 		logo = new JButton(LOGO);
@@ -256,6 +268,9 @@ implements ActionListener, MetronomeListener
 		contentPane.add(exit);
 	}
 	
+	/**
+	* Creates the options menu
+	*/
 	public void createOptionsMenu()
 	{		
         music = new JButton(MUSIC + ": Off");
@@ -273,6 +288,9 @@ implements ActionListener, MetronomeListener
 		createBackButton();
 	}
 	
+	/**
+	* Creates the level menu
+	*/
 	public void createLevelMenu()
 	{		
 		logo = new JButton(LOGO);
@@ -328,6 +346,9 @@ implements ActionListener, MetronomeListener
 		contentPane.add(level_three);
 	}
 	
+	/**
+	* Creates the back button
+	*/
 	public void createBackButton()
 	{		
 		back = new JButton(BACK);
@@ -343,6 +364,10 @@ implements ActionListener, MetronomeListener
 		  } catch (IllegalArgumentException ex) {}
 		contentPane.add(back);
 	}
+	
+	/**
+	* Creates the next button
+	*/
 	public void createNextButton()
 	{
 		next = new JButton(NEXT);
@@ -351,6 +376,11 @@ implements ActionListener, MetronomeListener
 		contentPane.add(next);
 	}
 	
+	/**
+	* Unused method
+	* 
+	* @param arg0
+	*/
 	@Override
 	public void handleTick(int arg0) 
 	{
